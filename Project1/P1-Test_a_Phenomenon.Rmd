@@ -1,0 +1,13 @@
+---
+title: "Test a Phenomenon"
+author: "Scott Brenstuhl"
+date: "September 27, 2016"
+output: html_document
+---
+
+
+```{r echo=FALSE}
+stroop <- read.csv("stroopdata.csv")
+
+```
+
