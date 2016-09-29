@@ -7,7 +7,105 @@ output: html_document
 
 
 ```{r echo=FALSE}
+library(tidyverse)
+
 stroop <- read.csv("stroopdata.csv")
 
 ```
+
+
+In this experement we are we are investingating the stroop effect. We will be
+testing the effect of congruent and incongruent words on the length of time that
+it takes for participants to identify the color that the name of a color is
+written in.
+
+##### Q1: What is our independent variable? What is our dependent variable?
+
+Our independent variable is if the color is congruent with the work that is
+writen (ex. red would be written in red) or incongruent (ex. the word red being
+written in yellow)
+
+Our dependent variable is the amount of time it takes to name the colors in the
+lists.
+
+##### Q2: What is an appropriate set of hypotheses for this task? What kind of 
+statistical test do you expect to perform? Justify your choices.
+
+Our null hypothese is that a color and the color it is written in matching will
+have no affect on the amount of time that it takes participants to state the 
+color which it is written in.
+
+Our hypothese is that the color that a color is written in will affect how long
+it takes people to state the color it is written in.
+
+I have picked these hypotheses because while it seems most likely that a color 
+and the color it is writen in matching would make the task take less time, it
+is also possible that it will make it take longer and it will be interesting to
+explore both possibilities at once.
+
+
+##### Q3: Report some descriptive statistics regarding this dataset. Include at
+least one measure of central tendency and at least one measure of variability.
+
+```{r echo=FALSE}
+M_c <- sum(stroop$Congruent)/length(stroop$Congruent)
+M_i <- sum(stroop$Incongruent)/length(stroop$Incongruent)
+
+Med_c <- median(stroop$Congruent)
+Med_i <- median(stroop$Incongruent)
+
+```
+
+
+```{r echo=FALSE}
+sd_c <- (stroop$Congruent - M_c) ^2 %>%
+            sum() %>%
+            sqrt()
+
+sd_i <- (stroop$Incongruent - M_i) ^2 %>%
+            sum() %>%
+            sqrt()
+
+```
+
+
+
+##### Q4: Provide one or two visualizations that show the distribution of the 
+sample data. Write one or two sentences noting what you observe about the plot 
+or plots.
+
+```{r, echo = FALSE}
+tidy_stroop <- gather(stroop)
+names(tidy_stroop) <- c("coloring", "time")
+
+ggplot(data = tidy_stroop, aes(x= time)) +
+    geom_histogram(binwidth = 2) +
+    facet_grid(coloring ~.) +
+    labs(title = "Time of Stroop Task by Conguency")
+```
+
+
+
+```{r, echo = FALSE}
+ggplot(data = stroop, aes(x=Congruent, y = Incongruent)) +
+    geom_point() +
+    geom_smooth(method = "lm")
+
+```
+
+
+##### Q5: Now, perform the statistical test and report your results. What is 
+your confidence level and your critical statistic value? Do you reject the null 
+hypothesis or fail to reject it? Come to a conclusion in terms of the experiment
+task. Did the results match up with your expectations?
+
+
+
+##### Q6 (Optional): What do you think is responsible for the effects observed? 
+Can you think of an alternative or similar task that would result in a similar 
+effect? Some research about the problem will be helpful for thinking about these
+two questions!
+
+
+
 
