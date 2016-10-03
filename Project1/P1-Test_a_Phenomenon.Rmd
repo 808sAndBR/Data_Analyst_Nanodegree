@@ -14,7 +14,7 @@ stroop <- read.csv("stroopdata.csv")
 ```
 
 
-In this experement we are we are investingating the stroop effect. We will be
+In this experiment we are we are investigating the stroop effect. We will be
 testing the effect of congruent and incongruent words on the length of time that
 it takes for participants to identify the color that the name of a color is
 written in.
@@ -22,7 +22,7 @@ written in.
 ##### Q1: What is our independent variable? What is our dependent variable?
 
 Our independent variable is if the color is congruent with the word that is
-writen (ex. <font color = "red"> red </font>) or incongruent (ex. 
+written (ex. <font color = "red"> red </font>) or incongruent (ex. 
 <font color = "blue"> red </font>).
 
 Our dependent variable is the amount of time it takes to name the colors in the
@@ -30,15 +30,15 @@ lists.
 
 ##### Q2: What is an appropriate set of hypotheses for this task? What kind of statistical test do you expect to perform? Justify your choices.
 
-Our null hypothese is that a color and the color it is written in matching will
+Our null hypotheses is that a color and the color it is written in matching will
 have no affect on the amount of time that it takes participants to state the 
 color which it is written in.
 
-Our hypothese is that the color that a color is written in will affect how long
+Our hypothesis is that the color that a color is written in will affect how long
 it takes people to state the color it is written in.
 
 I have picked these hypotheses because while it seems most likely that a color 
-and the color it is writen in matching would make the task take less time, it
+and the color it is written in matching would make the task take less time, it
 is also possible that it will make it take longer and it will be interesting to
 explore both possibilities at once.
 
@@ -79,7 +79,7 @@ sd_i <- (stroop$Incongruent - M_i) ^2 %>%
 
 ```
 
-The conruent times' standard deviation is ```r sd_c```.
+The congruent times' standard deviation is ```r sd_c```.
 
 The incongruent times' standard deviation is ```r sd_i```.
 
@@ -129,7 +129,8 @@ t <- (M_c - M_i) / SEM
 # Margin of error at .05
 MofE <-2.069 * SEM
 
-CI <- c(M - MofE, M + MofE)
+CI_low <- M - MofE
+CI_high <- M + MofE
 
 ```
 
@@ -137,18 +138,25 @@ Since we are doing a two tailed t-test with alpha = .05 and 23 degrees of
 freedom our t-critical is +/- 2.069.
 
 For the difference in task time between congruent colors and incongruent colors 
-we get a t-statistic of ```r t ```. Which is well below the -2.069 t-critical 
-value and shows that having congrunent colors lowers the time it takes to 
-complete the stroop task a statistically significant amount.
+we get a t-statistic of ```r round(t, 2) ```. Which is well below the -2.069 
+t-critical value and shows that having congruent colors lowers the time it takes
+to complete the stroop task a statistically significant amount. So we will 
+reject the null hypothesis.
 
-With our confidence intervale we can conclude that on average people will
-take somewhere in the range of ```r CI ``` fewer seconds to complete the stroop
-task when the colors are congruent.
-
+With our confidence interval we can conclude that on average people will
+take somewhere between ```r round(CI_low, 2) ```  and ```r round(CI_high, 2)``` 
+fewer seconds to complete the stroop task when the colors are congruent.
 
 
 ##### Q6 (Optional): What do you think is responsible for the effects observed? Can you think of an alternative or similar task that would result in a similar effect? Some research about the problem will be helpful for thinking about these two questions!
 
+It seems that your brain automatically reads the words, even though you are 
+trying to name the color so if they are the same there is no conflict and you
+can state the color you are thinking when you look at the work. If they are 
+incongruent though, you have both the color you read and the color of the text
+in your head and you have to sort out which to say which slows you down. 
 
-
+It would be really interesting to see if this carries over to something like 
+having a word super imposed on top of an image and trying to name the image and
+if having "car" superimposed on a picture of a truck would cause any difference.
 
