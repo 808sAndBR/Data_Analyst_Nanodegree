@@ -6,7 +6,7 @@ output: html_document
 ---
 
 
-```{r echo=FALSE}
+```{r alert=FALSE, message = FALSE, echo = FALSE, warning=FALSE}
 library(tidyverse)
 
 stroop <- read.csv("stroopdata.csv")
@@ -21,15 +21,14 @@ written in.
 
 ##### Q1: What is our independent variable? What is our dependent variable?
 
-Our independent variable is if the color is congruent with the work that is
-writen (ex. red would be written in red) or incongruent (ex. the word red being
-written in yellow)
+Our independent variable is if the color is congruent with the word that is
+writen (ex. <font color = "red"> red </font>) or incongruent (ex. 
+<font color = "blue"> red </font>).
 
 Our dependent variable is the amount of time it takes to name the colors in the
 lists.
 
-##### Q2: What is an appropriate set of hypotheses for this task? What kind of 
-statistical test do you expect to perform? Justify your choices.
+##### Q2: What is an appropriate set of hypotheses for this task? What kind of statistical test do you expect to perform? Justify your choices.
 
 Our null hypothese is that a color and the color it is written in matching will
 have no affect on the amount of time that it takes participants to state the 
@@ -44,37 +43,49 @@ is also possible that it will make it take longer and it will be interesting to
 explore both possibilities at once.
 
 
-##### Q3: Report some descriptive statistics regarding this dataset. Include at
-least one measure of central tendency and at least one measure of variability.
+##### Q3: Report some descriptive statistics regarding this dataset. Include at least one measure of central tendency and at least one measure of variability.
 
 ```{r echo=FALSE}
-M_c <- sum(stroop$Congruent)/length(stroop$Congruent)
-M_i <- sum(stroop$Incongruent)/length(stroop$Incongruent)
+M_c <- (sum(stroop$Congruent)/length(stroop$Congruent)) %>%
+        round(2)
 
-Med_c <- median(stroop$Congruent)
-Med_i <- median(stroop$Incongruent)
+M_i <- (sum(stroop$Incongruent)/length(stroop$Incongruent)) %>%
+        round(2)
+
+Med_c <- median(stroop$Congruent) %>%
+            round(2)
+
+Med_i <- median(stroop$Incongruent) %>%
+            round(2)
 
 ```
+
+The congruent times have a mean of ```r M_c``` and a median of ```r Med_c```.
+
+While the incongruent times have a mean of ```r M_i``` and a median of 
+```r Med_i```. 
 
 
 ```{r echo=FALSE}
 sd_c <- (stroop$Congruent - M_c) ^2 %>%
             sum() %>%
-            sqrt()
+            sqrt() %>%
+            round(2)
 
 sd_i <- (stroop$Incongruent - M_i) ^2 %>%
             sum() %>%
-            sqrt()
+            sqrt() %>%
+            round(2)
 
 ```
 
+The conruent times' standard deviation is ```r sd_c```.
 
+The incongruent times' standard deviation is ```r sd_i```.
 
-##### Q4: Provide one or two visualizations that show the distribution of the 
-sample data. Write one or two sentences noting what you observe about the plot 
-or plots.
+##### Q4: Provide one or two visualizations that show the distribution of the sample data. Write one or two sentences noting what you observe about the plot or plots.
 
-```{r, echo = FALSE}
+```{r echo = FALSE}
 tidy_stroop <- gather(stroop)
 names(tidy_stroop) <- c("coloring", "time")
 
@@ -84,27 +95,59 @@ ggplot(data = tidy_stroop, aes(x= time)) +
     labs(title = "Time of Stroop Task by Conguency")
 ```
 
+When we look at the faceted histogram it looks pretty clear that the stroop task
+usually takes longer to complete when the coloring is incongruent with the
+words. At the far right of the "Incongruent" facet we can also see that the 
+incongruency makes the task very difficult for some people.
 
-
-```{r, echo = FALSE}
-ggplot(data = stroop, aes(x=Congruent, y = Incongruent)) +
-    geom_point() +
-    geom_smooth(method = "lm")
+```{r echo = FALSE}
+# ggplot(data = stroop, aes(x=Congruent, y = Incongruent)) +
+#     geom_point() +
+#     geom_smooth(method = "lm")
 
 ```
 
 
-##### Q5: Now, perform the statistical test and report your results. What is 
-your confidence level and your critical statistic value? Do you reject the null 
-hypothesis or fail to reject it? Come to a conclusion in terms of the experiment
-task. Did the results match up with your expectations?
+##### Q5: Now, perform the statistical test and report your results. What is your confidence level and your critical statistic value? Do you reject the null hypothesis or fail to reject it? Come to a conclusion in terms of the experiment task. Did the results match up with your expectations?
 
 
 
-##### Q6 (Optional): What do you think is responsible for the effects observed? 
-Can you think of an alternative or similar task that would result in a similar 
-effect? Some research about the problem will be helpful for thinking about these
-two questions!
+```{r echo = FALSE}
+n <- nrow(stroop)
+d_free <- n-1
+D <- (stroop$Congruent - stroop$Incongruent)
+M <- mean(D)
+s <- (sum((D - M)^2) / d_free) %>%
+        sqrt()
+
+# Standard error of mean
+SEM <- s/sqrt(n)
+
+# t-statistic
+t <- (M_c - M_i) / SEM
+
+# Margin of error at .05
+MofE <-2.069 * SEM
+
+CI <- c(M - MofE, M + MofE)
+
+```
+
+Since we are doing a two tailed t-test with alpha = .05 and 23 degrees of 
+freedom our t-critical is +/- 2.069.
+
+For the difference in task time between congruent colors and incongruent colors 
+we get a t-statistic of ```r t ```. Which is well below the -2.069 t-critical 
+value and shows that having congrunent colors lowers the time it takes to 
+complete the stroop task a statistically significant amount.
+
+With our confidence intervale we can conclude that on average people will
+take somewhere in the range of ```r CI ``` fewer seconds to complete the stroop
+task when the colors are congruent.
+
+
+
+##### Q6 (Optional): What do you think is responsible for the effects observed? Can you think of an alternative or similar task that would result in a similar effect? Some research about the problem will be helpful for thinking about these two questions!
 
 
 
