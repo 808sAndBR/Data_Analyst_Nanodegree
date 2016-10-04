@@ -11,7 +11,6 @@
 
 <meta name="author" content="Scott Brenstuhl" />
 
-<meta name="date" content="2016-09-27" />
 
 <title>Test a Phenomenon</title>
 
@@ -111,12 +110,11 @@ $(document).ready(function () {
 
 <h1 class="title">Test a Phenomenon</h1>
 <h4 class="author"><em>Scott Brenstuhl</em></h4>
-<h4 class="date"><em>September 27, 2016</em></h4>
 
 </div>
 
 
-<p>In this experiment we are we are investigating the stroop effect. We will be testing the effect of congruent and incongruent words on the length of time that it takes for participants to identify the color that the name of a color is written in.</p>
+<p>In this experiment we are we are investigating the stroop effect. We will be testing the effect of words being congruent and incongruent with the color they are wriiten in on the length of time that it takes for participants to identify the color that the name of a color is written in.</p>
 <div id="q1-what-is-our-independent-variable-what-is-our-dependent-variable" class="section level5">
 <h5>Q1: What is our independent variable? What is our dependent variable?</h5>
 <p>Our independent variable is if the color is congruent with the word that is written (ex. <font color="red"> red </font>) or incongruent (ex. <font color="blue"> red </font>).</p>
@@ -124,16 +122,18 @@ $(document).ready(function () {
 </div>
 <div id="q2-what-is-an-appropriate-set-of-hypotheses-for-this-task-what-kind-of-statistical-test-do-you-expect-to-perform-justify-your-choices." class="section level5">
 <h5>Q2: What is an appropriate set of hypotheses for this task? What kind of statistical test do you expect to perform? Justify your choices.</h5>
-<p>Our null hypotheses is that a color and the color it is written in matching will have no affect on the amount of time that it takes participants to state the color which it is written in.</p>
-<p>Our hypothesis is that the color that a color is written in will affect how long it takes people to state the color it is written in.</p>
+<p>Our null hypotheses is that a color and the color it is written in matching will have no affect on the average population time to state the color which it is written in. So the population mean time for congruent words is equal to the population mean time for incongruent words.</p>
+<p>H<sub>0</sub>: μ<sub>congruent</sub> = μ<sub>incongruent</sub></p>
+<p>Our alternate hypothesis is that the color that a color is written in will have an affect on the average population time of how long it takes people to state the color it is written in. So the population mean time for congruent words will not be equal to the population mean time for incongruent words.</p>
+<p>H<sub>1</sub>: μ<sub>congruent</sub> ≠ μ<sub>incongruent</sub></p>
 <p>I have picked these hypotheses because while it seems most likely that a color and the color it is written in matching would make the task take less time, it is also possible that it will make it take longer and it will be interesting to explore both possibilities at once.</p>
 </div>
 <div id="q3-report-some-descriptive-statistics-regarding-this-dataset.-include-at-least-one-measure-of-central-tendency-and-at-least-one-measure-of-variability." class="section level5">
 <h5>Q3: Report some descriptive statistics regarding this dataset. Include at least one measure of central tendency and at least one measure of variability.</h5>
 <p>The congruent times have a mean of <code>14.05</code> and a median of <code>14.36</code>.</p>
 <p>While the incongruent times have a mean of <code>22.02</code> and a median of <code>21.02</code>.</p>
-<p>The congruent times’ standard deviation is <code>17.07</code>.</p>
-<p>The incongruent times’ standard deviation is <code>23.01</code>.</p>
+<p>The congruent times’ standard deviation is <code>3.56</code>.</p>
+<p>The incongruent times’ standard deviation is <code>4.8</code>.</p>
 </div>
 <div id="q4-provide-one-or-two-visualizations-that-show-the-distribution-of-the-sample-data.-write-one-or-two-sentences-noting-what-you-observe-about-the-plot-or-plots." class="section level5">
 <h5>Q4: Provide one or two visualizations that show the distribution of the sample data. Write one or two sentences noting what you observe about the plot or plots.</h5>

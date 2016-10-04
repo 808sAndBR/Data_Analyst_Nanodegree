@@ -1,7 +1,6 @@
 ---
 title: "Test a Phenomenon"
 author: "Scott Brenstuhl"
-date: "September 27, 2016"
 output: html_document
 ---
 
@@ -15,9 +14,9 @@ stroop <- read.csv("stroopdata.csv")
 
 
 In this experiment we are we are investigating the stroop effect. We will be
-testing the effect of congruent and incongruent words on the length of time that
-it takes for participants to identify the color that the name of a color is
-written in.
+testing the effect of words being congruent and incongruent with the color they
+are wriiten in on the length of time that it takes for participants to identify
+the color that the name of a color is written in.
 
 ##### Q1: What is our independent variable? What is our dependent variable?
 
@@ -31,11 +30,18 @@ lists.
 ##### Q2: What is an appropriate set of hypotheses for this task? What kind of statistical test do you expect to perform? Justify your choices.
 
 Our null hypotheses is that a color and the color it is written in matching will
-have no affect on the amount of time that it takes participants to state the 
-color which it is written in.
+have no affect on the average population time to state the color which it is 
+written in. So the population mean time for congruent words is equal to the
+population mean time for incongruent words.
 
-Our hypothesis is that the color that a color is written in will affect how long
-it takes people to state the color it is written in.
+H<sub>0</sub>: μ<sub>congruent</sub> = μ<sub>incongruent</sub>
+
+Our alternate hypothesis is that the color that a color is written in will have
+an affect on the average population time of how long it takes people to state 
+the color it is written in. So the population mean time for congruent words will
+not be equal to the population mean time for incongruent words.
+
+H<sub>1</sub>: μ<sub>congruent</sub> ≠ μ<sub>incongruent</sub>
 
 I have picked these hypotheses because while it seems most likely that a color 
 and the color it is written in matching would make the task take less time, it
@@ -67,16 +73,22 @@ While the incongruent times have a mean of ```r M_i``` and a median of
 
 
 ```{r echo=FALSE}
-sd_c <- (stroop$Congruent - M_c) ^2 %>%
-            sum() %>%
-            sqrt() %>%
+var_c <- (stroop$Congruent - M_c) ^2 %>%
+            sum()/(length(stroop$Congruent) - 1) 
+
+sd_c <- sqrt(var_c) %>%
+            round(2)
+# check that 'from scratch' math is right
+# sd_c == round(sd(stroop$Congruent),2)
+
+var_i <- (stroop$Incongruent - M_i) ^2 %>%
+            sum()/(length(stroop$Incongruent) - 1) 
+
+sd_i <- sqrt(var_i) %>%
             round(2)
 
-sd_i <- (stroop$Incongruent - M_i) ^2 %>%
-            sum() %>%
-            sqrt() %>%
-            round(2)
-
+# check that 'from scratch' math is right
+# sd_i == round(sd(stroop$Incongruent),2)
 ```
 
 The congruent times' standard deviation is ```r sd_c```.
