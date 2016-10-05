@@ -114,7 +114,7 @@ $(document).ready(function () {
 </div>
 
 
-<p>In this experiment we are we are investigating the stroop effect. We will be testing the effect of words being congruent and incongruent with the color they are wriiten in on the length of time that it takes for participants to identify the color that the name of a color is written in.</p>
+<p>In this experiment we are we are investigating the stroop effect. We will be testing the effect of words being congruent and incongruent with the color they are written in on the length of time that it takes for participants to identify the color that the name of a color is written in.</p>
 <div id="q1-what-is-our-independent-variable-what-is-our-dependent-variable" class="section level5">
 <h5>Q1: What is our independent variable? What is our dependent variable?</h5>
 <p>Our independent variable is if the color is congruent with the word that is written (ex. <font color="red"> red </font>) or incongruent (ex. <font color="blue"> red </font>).</p>
@@ -126,7 +126,7 @@ $(document).ready(function () {
 <p>H<sub>0</sub>: μ<sub>congruent</sub> = μ<sub>incongruent</sub></p>
 <p>Our alternate hypothesis is that the color that a color is written in will have an affect on the average population time of how long it takes people to state the color it is written in. So the population mean time for congruent words will not be equal to the population mean time for incongruent words.</p>
 <p>H<sub>1</sub>: μ<sub>congruent</sub> ≠ μ<sub>incongruent</sub></p>
-<p>I have picked these hypotheses because while it seems most likely that a color and the color it is written in matching would make the task take less time, it is also possible that it will make it take longer and it will be interesting to explore both possibilities at once.</p>
+<p>Since the participants performed the task both with the words being congruent and incongruent and since time is a continuous variable, we will use a dependent t-test. With there being less than 30 observations we will have it be a two tailed test which have been shown to be accurate for small sample sizes.</p>
 </div>
 <div id="q3-report-some-descriptive-statistics-regarding-this-dataset.-include-at-least-one-measure-of-central-tendency-and-at-least-one-measure-of-variability." class="section level5">
 <h5>Q3: Report some descriptive statistics regarding this dataset. Include at least one measure of central tendency and at least one measure of variability.</h5>
@@ -142,14 +142,19 @@ $(document).ready(function () {
 </div>
 <div id="q5-now-perform-the-statistical-test-and-report-your-results.-what-is-your-confidence-level-and-your-critical-statistic-value-do-you-reject-the-null-hypothesis-or-fail-to-reject-it-come-to-a-conclusion-in-terms-of-the-experiment-task.-did-the-results-match-up-with-your-expectations" class="section level5">
 <h5>Q5: Now, perform the statistical test and report your results. What is your confidence level and your critical statistic value? Do you reject the null hypothesis or fail to reject it? Come to a conclusion in terms of the experiment task. Did the results match up with your expectations?</h5>
-<p>Since we are doing a two tailed t-test with alpha = .05 and 23 degrees of freedom our t-critical is +/- 2.069.</p>
+<p>Since we are doing a two tailed t-test with alpha = .05 and <code>23</code> degrees of freedom our t-critical is +/- 2.069.</p>
 <p>For the difference in task time between congruent colors and incongruent colors we get a t-statistic of <code>-8.03</code>. Which is well below the -2.069 t-critical value and shows that having congruent colors lowers the time it takes to complete the stroop task a statistically significant amount. So we will reject the null hypothesis.</p>
-<p>With our confidence interval we can conclude that on average people will take somewhere between <code>-10.02</code> and <code>-5.91</code> fewer seconds to complete the stroop task when the colors are congruent.</p>
+<p>t(<code>23</code>) = <code>-8.03</code>, P &lt; .05</p>
+<p>With our confidence interval we can conclude that on average people will take somewhere between <code>-10.02</code> and <code>-5.91</code> fewer seconds to complete the stroop task when the colors are congruent than when they are incongruent.</p>
 </div>
 <div id="q6-optional-what-do-you-think-is-responsible-for-the-effects-observed-can-you-think-of-an-alternative-or-similar-task-that-would-result-in-a-similar-effect-some-research-about-the-problem-will-be-helpful-for-thinking-about-these-two-questions" class="section level5">
 <h5>Q6 (Optional): What do you think is responsible for the effects observed? Can you think of an alternative or similar task that would result in a similar effect? Some research about the problem will be helpful for thinking about these two questions!</h5>
 <p>It seems that your brain automatically reads the words, even though you are trying to name the color so if they are the same there is no conflict and you can state the color you are thinking when you look at the work. If they are incongruent though, you have both the color you read and the color of the text in your head and you have to sort out which to say which slows you down.</p>
 <p>It would be really interesting to see if this carries over to something like having a word super imposed on top of an image and trying to name the image and if having “car” superimposed on a picture of a truck would cause any difference.</p>
+</div>
+<div id="resources" class="section level5">
+<h5>Resources</h5>
+<p>I reviewed these concepts further at the following sites:<br /><a href="http://support.minitab.com/en-us/minitab/17/topic-library/basic-statistics-and-graphs/hypothesis-tests/basics/null-and-alternative-hypotheses/" class="uri">http://support.minitab.com/en-us/minitab/17/topic-library/basic-statistics-and-graphs/hypothesis-tests/basics/null-and-alternative-hypotheses/</a><br /><a href="https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php" class="uri">https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php</a><br /><a href="http://www.measuringu.com/blog/small-n.php" class="uri">http://www.measuringu.com/blog/small-n.php</a></p>
 </div>
 
 

@@ -15,7 +15,7 @@ stroop <- read.csv("stroopdata.csv")
 
 In this experiment we are we are investigating the stroop effect. We will be
 testing the effect of words being congruent and incongruent with the color they
-are wriiten in on the length of time that it takes for participants to identify
+are written in on the length of time that it takes for participants to identify
 the color that the name of a color is written in.
 
 ##### Q1: What is our independent variable? What is our dependent variable?
@@ -43,10 +43,10 @@ not be equal to the population mean time for incongruent words.
 
 H<sub>1</sub>: μ<sub>congruent</sub> ≠ μ<sub>incongruent</sub>
 
-I have picked these hypotheses because while it seems most likely that a color 
-and the color it is written in matching would make the task take less time, it
-is also possible that it will make it take longer and it will be interesting to
-explore both possibilities at once.
+Since the participants performed the task both with the words being congruent 
+and incongruent and since time is a continuous variable, we will use a 
+dependent t-test. With there being less than 30 observations we will have it be 
+a two tailed test which have been shown to be accurate for small sample sizes.
 
 
 ##### Q3: Report some descriptive statistics regarding this dataset. Include at least one measure of central tendency and at least one measure of variability.
@@ -146,8 +146,8 @@ CI_high <- M + MofE
 
 ```
 
-Since we are doing a two tailed t-test with alpha = .05 and 23 degrees of 
-freedom our t-critical is +/- 2.069.
+Since we are doing a two tailed t-test with alpha = .05 and ```r d_free``` 
+degrees of freedom our t-critical is +/- 2.069.
 
 For the difference in task time between congruent colors and incongruent colors 
 we get a t-statistic of ```r round(t, 2) ```. Which is well below the -2.069 
@@ -155,9 +155,12 @@ t-critical value and shows that having congruent colors lowers the time it takes
 to complete the stroop task a statistically significant amount. So we will 
 reject the null hypothesis.
 
+t(```r d_free```) = ```r round(t, 2)```, P < .05 
+
 With our confidence interval we can conclude that on average people will
 take somewhere between ```r round(CI_low, 2) ```  and ```r round(CI_high, 2)``` 
-fewer seconds to complete the stroop task when the colors are congruent.
+fewer seconds to complete the stroop task when the colors are congruent than
+when they are incongruent.
 
 
 ##### Q6 (Optional): What do you think is responsible for the effects observed? Can you think of an alternative or similar task that would result in a similar effect? Some research about the problem will be helpful for thinking about these two questions!
@@ -171,4 +174,12 @@ in your head and you have to sort out which to say which slows you down.
 It would be really interesting to see if this carries over to something like 
 having a word super imposed on top of an image and trying to name the image and
 if having "car" superimposed on a picture of a truck would cause any difference.
+
+
+
+##### Resources
+I reviewed these concepts further at the following sites:  
+http://support.minitab.com/en-us/minitab/17/topic-library/basic-statistics-and-graphs/hypothesis-tests/basics/null-and-alternative-hypotheses/  
+https://statistics.laerd.com/statistical-guides/dependent-t-test-statistical-guide.php  
+http://www.measuringu.com/blog/small-n.php
 
