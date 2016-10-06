@@ -113,11 +113,14 @@ words. At the far right of the "Incongruent" facet we can also see that the
 incongruency makes the task very difficult for some people.
 
 ```{r echo = FALSE}
-# ggplot(data = stroop, aes(x=Congruent, y = Incongruent)) +
-#     geom_point() +
-#     geom_smooth(method = "lm")
+ggplot(data = tidy_stroop, aes(x= coloring, y = time)) +
+    geom_boxplot() +
+    xlab('')
 
 ```
+
+In the boxplot we can see more clearly see the distributions and the outliers
+in incongruent sample. Congruency is still looking like it saves a lot of time.
 
 
 ##### Q5: Now, perform the statistical test and report your results. What is your confidence level and your critical statistic value? Do you reject the null hypothesis or fail to reject it? Come to a conclusion in terms of the experiment task. Did the results match up with your expectations?
