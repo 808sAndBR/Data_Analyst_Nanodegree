@@ -1,3 +1,7 @@
-http://overpass-api.de/query_form.html
+I aquired my map data by going to http://overpass-api.de/query_form.html and using the query form.
 
+I entered the following call:
 (node(39.3587, -84.8419, 39.6961, -84.2033);<;);out meta;
+
+This is the area around Oxford, Oh where I graduated from Miami University, plus enough additional
+area to get me up above the required 50mb file size (60.6MB).
