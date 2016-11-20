@@ -10,6 +10,8 @@ import schema
 from collections import defaultdict
 
 # Global Constants
+
+# Setting the file paths to read and write the data
 OSM_FILE = "sample_k10.osm"
 OSM_PATH = "data/" + OSM_FILE
 CLEAN_PATH = "processed_data/"
@@ -21,6 +23,7 @@ WAYS_PATH = CLEAN_PATH + "ways.csv"
 WAY_NODES_PATH = CLEAN_PATH + "ways_nodes.csv"
 WAY_TAGS_PATH = CLEAN_PATH + "ways_tags.csv"
 
+# Schema for validation
 SCHEMA = schema.schema
 
 NODE_FIELDS = ['id', 'lat', 'lon', 'user', 'uid', 'version',
@@ -30,10 +33,9 @@ WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 
-
-LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
+# REGEX for the shape eliment field
 PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
-# Cleaning up the data
+
 
 def is_street_name(elem):
     return (elem.attrib['k'] == "addr:street")
