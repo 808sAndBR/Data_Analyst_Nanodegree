@@ -11,8 +11,8 @@ from collections import defaultdict
 
 # Global Constants
 
-# Setting the file paths to read and write the data
-OSM_FILE = "sample_k10.osm"
+# File paths to read and write the data
+OSM_FILE = "full_map.osm"
 OSM_PATH = "data/" + OSM_FILE
 CLEAN_PATH = "processed_data/"
 
@@ -26,6 +26,7 @@ WAY_TAGS_PATH = CLEAN_PATH + "ways_tags.csv"
 # Schema for validation
 SCHEMA = schema.schema
 
+# Fields for the different types of elelments
 NODE_FIELDS = ['id', 'lat', 'lon', 'user', 'uid', 'version',
                 'changeset', 'timestamp']
 NODE_TAGS_FIELDS = ['id', 'key', 'value', 'type']
@@ -33,39 +34,89 @@ WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 
-# REGEX for the shape eliment field
+# REGEX for the identifying charicters that will cause issues
 PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 
 
+# Helper functions to clean up the data
+def hasNumbers(inputString):
+    '''Check if there is a number in string'''
+    return any(char.isdigit() for char in inputString)
+
 def is_street_name(elem):
+    '''Check if element is a street name'''
     return (elem.attrib['k'] == "addr:street")
 
 def update_name(name, mapping):
+    '''Convert abreviations to a prefered name'''
     road_type = name.split()[-1:][0]
     cleaned = mapping[road_type]
-    print "start: " + name
+    # print "start: " + name
     name = name.replace(road_type, cleaned)
-    print "end: " + name
+    # print "end: " + name
     return name
 
-def value_cleaner(elem):
+def add_alt_name(elem, alt_name, element_id, tag_list):
+    '''Add a new tag for alternate names'''
+    type_key = k_prep(elem)
+    tag_type = type_key[0]
+    tag_key = type_key[1]
+    tag_list.append({'id': element_id,
+            'key': 'alt_name',
+            'value': alt_name,
+            'type': tag_type})
+
+def k_prep(elem):
+    '''Convert k attributes to tag_type and tag_key'''
+    k = elem.attrib['k'].split(':', 1)
+
+    if len(k) > 1:
+        tag_type = k[0]
+        tag_key = k[1]
+    else:
+        tag_type = 'regular'
+        tag_key = k[0]
+
+    return (tag_type, tag_key)
+
+def value_cleaner(elem, tag_key, tag_type, element_id, tag_list):
+    '''Clean various issues with v attributes'''
     value = elem.attrib['v']
     if is_street_name(elem) and value.split()[-1:][0] not in expected:
         try:
             value = update_name(value, mapping)
         except:
             print "No suggestion for:" + value
+
+    # Some alternate names are included as ; seperated list this moves them
+    # to an alt_name tag instead.
+    elif tag_key == 'name' and ';' in value and tag_type != 'flag':
+        values = value.split(';')
+        value = values[0]
+        add_alt_name(elem, values[1], element_id, tag_list)
+
+    # Tricky to sort out abreviations, phone numbers, zips, etc. this catches
+    # most issues of all capital phrases.
+    if value == value.upper() and ' ' in value:
+        if hasNumbers(value) == False:
+            value = value.title()
+
     return value
 
+# Types of roadways we expect to see
 expected = ["Street", "Avenue", "Boulevard", "Drive", "Court", "Place",
             "Square", "Lane", "Road", "Trail", "Parkway", "Commons", "Pike",
             "Highway", "Way"]
 
-mapping = { "Ct" : "Court",
+# Fixing roadway issues seen in this dataset
+mapping = { "Blvd." : "Boulevard", #
+            "Ct" : "Court",
             "Dr" : "Drive",
             "St" : "Street",
             "St." : "Street",
+            "ST" : "Street", #
             "Ave" : "Avenue",
+            "Ave." : "Avenue", #
             "Rd." : "Road",
             "Rd" : "Road"
             }
@@ -82,31 +133,29 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
 
     nd_count = 0
     for elem in element.iter():
+        element_id = element.attrib['id']
+
         if elem.tag == 'nd':
-            way_nodes.append({'id' : element.attrib['id'],
+            way_nodes.append({'id' : element_id,
                                 'node_id': elem.attrib['ref'],
                                 'position': nd_count})
-            nd_count +=1
+            nd_count += 1
         elif elem.tag == 'tag':
+            # skip to next iteration if their are problem characters
             if re.search(problem_chars, elem.attrib['k']):
                 continue
 
-            k = elem.attrib['k'].split(':', 1)
+            type_key = k_prep(elem)
+            tag_type = type_key[0]
+            tag_key = type_key[1]
 
-            if len(k) > 1:
-                tag_type = k[0]
-                tag_key = k[1]
-            else:
-                tag_type = 'regular'
-                tag_key = k[0]
+            value = value_cleaner(elem, tag_key, tag_type, element_id, tags)
 
-            value = value_cleaner(elem)
-
-            tags.append({'id': element.attrib['id'],
+            tags.append({'id': element_id,
                         'key': tag_key,
                         'value': value,
-                        #'value' : elem.attrib['v'],
                         'type': tag_type})
+
     if element.tag == 'node':
         node_attribs = {x : element.attrib[x] for x in node_attr_fields }
         return {'node': node_attribs, 'node_tags': tags}
@@ -190,4 +239,5 @@ def process_map(file_in, validate):
                     way_tags_writer.writerows(el['way_tags'])
 
 
+# Run everything we have set up above
 process_map(OSM_PATH, False)
