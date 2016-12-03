@@ -200,7 +200,6 @@ def audit(osmfile):
     osm_file = open(osmfile, "r")
     street_types = defaultdict(set)
     for event, elem in ET.iterparse(osm_file, events=("start",)):
-
         if elem.tag == "node" or elem.tag == "way":
             for tag in elem.iter("tag"):
                 if is_street_name(tag):
@@ -397,9 +396,9 @@ import pprint
 import re
 import xml.etree.cElementTree as ET
 
-#import cerberus
+import cerberus
 
-#import schema
+import schema
 
 OSM_PATH = "example.osm"
 
@@ -412,7 +411,7 @@ WAY_TAGS_PATH = "ways_tags.csv"
 LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
 PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 
-#SCHEMA = schema.schema
+SCHEMA = schema.schema
 
 # Make sure the fields order in the csvs matches the column order in the sql table schema
 NODE_FIELDS = ['id', 'lat', 'lon', 'user', 'uid', 'version', 'changeset', 'timestamp']

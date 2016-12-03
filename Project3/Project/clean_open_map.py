@@ -237,4 +237,4 @@ def process_map(file_in, validate):
 
 
 # Run everything we have set up above
-process_map(OSM_PATH, False)
+process_map(OSM_PATH, True)

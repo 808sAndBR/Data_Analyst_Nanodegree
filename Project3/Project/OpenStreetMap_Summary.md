@@ -3,10 +3,15 @@
 
 Oxford, Ohio and the surrounding area.
 
-To get the raw data I used, go to the [Overpass API](http://overpass-api.de/query_form.html) and pass the Query Form:
-```(node(39.3587, -84.8419, 39.6961, -84.2033);<;);out meta;```
+To get the raw data I used, go to the [Overpass API](http://overpass-api.de/query_form.html) 
+and pass the Query Form:
 
-This is where Miami University is located which is where I went to college, so I am excited to see what I can uncover!
+```
+(node(39.3587, -84.8419, 39.6961, -84.2033);<;);out meta;
+```
+
+This is where Miami University is located which is where I went to college, so I am 
+excited to see what I can uncover!
 
 ### Reproducing
 1. Get the map data stated above (place in data folder and rename to full_map.osm)
@@ -20,13 +25,20 @@ You should now have a cleaned database to work with!
 ## Issues Encountered in My Map
 
 * Abbreviated street names (ex. ST, Ct, Dr instead of Street, Court, Drive)
-* Names being all uppercased (ex. "ELM STREET BUILDING" "HERITAGE COMMONS CENTER" "AIRPORT RADIO BUILDING") 
-* Alternate names being listed after a semicolon instead of as an alt_name tag (ex. "Mount Pleasant Cemetery;Monroe Cemetery" , "Little Miami National and State Scenic River; Little Miami River")
+* Names being all uppercased (ex. "ELM STREET BUILDING" "HERITAGE COMMONS CENTER" 
+"AIRPORT RADIO BUILDING") 
+* Alternate names being listed after a semicolon instead of as an alt_name tag 
+(ex. "Mount Pleasant Cemetery;Monroe Cemetery" , "Little Miami National and State 
+Scenic River; Little Miami River")
 * "YAGER STADIUM - EAST (CONCESSIONS," seems to have had a parsing error (or possibly human)
 
 ### Abbreviated Street Names
 
-These are easy enough to clean up. Using the REGEX provided in the case study I found the street names and then checked if they were in the list of expected names ("Street", "Avenue", "Boulevard", "Drive", "Court", "Place", "Square", "Lane", "Road", "Trail", "Parkway", "Commons", "Pike", "Highway", "Way") if not then I try to convert it to an expected name with the following function:
+These are easy enough to clean up. Using the REGEX provided in the case study I found 
+the street names and then checked if they were in the list of expected names ("Street", 
+"Avenue", "Boulevard", "Drive", "Court", "Place", "Square", "Lane", "Road", "Trail", 
+"Parkway", "Commons", "Pike", "Highway", "Way") if not then I try to convert it to an 
+expected name with the following function:
 
 ```
 def update_name(name, mapping):
@@ -51,7 +63,11 @@ mapping = { "Blvd." : "Boulevard",
 
 ### Uppercase Names
 
-Getting just the names that should not be uppercase was a little tricky because there are abbreviations, special codes, and other various situations where it was inappropriate. However I found if I first checked if a name was uppercased and had a space in it, then that it didn't contain any numbers, it would only be ones that should be fixed. After I could just use the title method on the string. Relevant part of name cleanup code:
+Getting just the names that should not be uppercase was a little tricky because there 
+are abbreviations, special codes, and other various situations where it was inappropriate. 
+However I found if I first checked if a name was uppercased and had a space in it, then 
+that it didn't contain any numbers, it would only be ones that should be fixed. After I 
+could just use the title method on the string. Relevant part of name cleanup code:
 
 ```
     if value == value.upper() and ' ' in value:
@@ -62,7 +78,12 @@ Getting just the names that should not be uppercase was a little tricky because 
 
 ### Alternate Names
 
-Finding the instances of multiple names listed with semicolons was straightforward, with the only exception need being to ignore them if they were a flag (the naming convention of United States; Ohio seems consistent and correct for them). After identifying these I passed them to function that creates an 'alt_name' tag (to match the correctly entered ones) with the same element id and type as the name we are splitting them from. The relevant name clean up section:
+Finding the instances of multiple names listed with semicolons was straightforward, 
+with the only exception need being to ignore them if they were a flag (the naming 
+convention of United States; Ohio seems consistent and correct for them). After 
+identifying these I passed them to function that creates an 'alt_name' tag (to 
+match the correctly entered ones) with the same element id and type as the name 
+we are splitting them from. The relevant name clean up section:
 
 ```
     elif tag_key == 'name' and ';' in value and tag_type != 'flag':
@@ -87,7 +108,14 @@ def add_alt_name(elem, alt_name, element_id, tag_list):
 
 ### Potential parsing error
 
-While checking into the uppercased names I came across "YAGER STADIUM - EAST (CONCESSIONS,", which made me concerned there may be some sort of parsing error with one of the data sources. However after checking for tags that end in commas and for any open parenthesis I wasn't able to find similar issues. I decided to rule this as user error and did not write a programatic fix in the ingestion script (seems like over engineering). The following sql can be used to fix this after building the database though (now title cased from data cleaning).
+While checking into the uppercased names I came across "YAGER STADIUM - 
+EAST (CONCESSIONS,", which made me concerned there may be some sort of 
+parsing error with one of the data sources. However after checking for 
+tags that end in commas and for any open parenthesis I wasn't able to find
+similar issues. I decided to rule this as user error and did not write a 
+programatic fix in the ingestion script (seems like over engineering). The 
+following sql can be used to fix this after building the database though 
+(now title cased from data cleaning).
 
 ```
 UPDATE way_tags 
@@ -95,8 +123,6 @@ SET value = 'Yager Stadium - East (Concessions)'
 WHERE value = 'Yager Stadium - East (Concessions,';
 ```
 ## Data Overview
-
-**All queries in this section are run in sqlite shell and can be found in overview_queries.sql.**
 
 ### File Sizes
 
@@ -146,7 +172,8 @@ SELECT count(*) FROM way_tags WHERE value = 'landfill';
 ```
 15
 
-I always thought it was odd how many landfills you go past driving south to Cincinnati, but this is WAY more than I expected!
+I always thought it was odd how many landfills you go past driving 
+south to Cincinnati, but this is WAY more than I expected!
 
 ### Additional Exploration
 
@@ -167,7 +194,9 @@ DSMcGregor | 84
 coopermj   | 59
 
 
-I was wondering if Miami would add their buildings themselves but it looks like these are normal users contributing them opposed to an official sounding user name.
+I was wondering if Miami would add their buildings themselves but it looks
+like these are normal users contributing them opposed to an official 
+sounding user name.
 
 **Restaurants and Bars**
 
@@ -185,7 +214,9 @@ bar        | 2
 restaurant | 13
 
 
-Sadly restaurants and bars are not tagged well at all in this area, with it being a college town there are a lot of bars and it would have been interesting to look more into these.
+Sadly restaurants and bars are not tagged well at all in this area, with it 
+being a college town there are a lot of bars and it would have been interesting 
+to look more into these.
 
 ```
 SELECT way_tags.key, COUNT(*) as num
@@ -228,13 +259,18 @@ information tagged to the buildings since it would have been interesting to
 look at things like percent of different types of school buildings (dorms, 
 administrative, dining halls, etc.).
 
-On the bright side we can get the names of the building and could potentially infer 
-the types of buildings, with the exception of being able to separate dorms from lecture halls since the majority of both are called "(Person's Name) Hall".
+On the bright side we can get the names of the building and could potentially 
+infer the types of buildings, with the exception of being able to separate 
+dorms from lecture halls since the majority of both are called "(Person's 
+Name) Hall".
 
 ```
 SELECT way_tags.value
 FROM way_tags 
-    JOIN (SELECT DISTINCT(id) FROM way_tags WHERE way_tags.key = 'building' AND way_tags.value = 'university') i
+    JOIN (SELECT DISTINCT(id) 
+    		FROM way_tags 
+    		WHERE way_tags.key = 'building' 
+    		AND way_tags.value = 'university') i
     ON way_tags.id = i.id
 WHERE way_tags.key = 'name'
 LIMIT 10;
