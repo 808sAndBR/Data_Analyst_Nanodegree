@@ -8,9 +8,11 @@ Stackoverflow.com
 Docs:
 	https://www.sqlite.org/lang_createtable.html
 	https://www.sqlite.org/datatype3.html
-	http://www.w3schools.com/sql/sql_notnull.asp
+	
 
 Random:
-	http://alvinalexander.com/android/sqlite-script-read-execute-howhttp://www.w3schools.com/sql/sql_distinct.asp
+	http://alvinalexander.com/android/sqlite-script-read-execute-how
+	http://www.w3schools.com/sql/sql_distinct.asp
+	http://www.w3schools.com/sql/sql_notnull.asp
 
 I read a lot of different things before realizing I had a typo in a file path.

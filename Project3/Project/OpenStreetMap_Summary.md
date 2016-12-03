@@ -312,10 +312,10 @@ large city and rural farm land.
 ### Ideas for improve the data set
 
 It would be awesome to get a lot of the bars and restaurants in Oxford 
-tagged. I would also love to see at least what the primary purpose of each 
-campus building is added to the data set. With it being a college campus, it 
-seems like a really straight forward way to address these issues would be to 
-get a professor interested in using this data set for a class and having an 
+tagged. I would also love to see at least the primary purpose of each 
+campus building added to the data set. With it being a college campus, it 
+seems like a straight forward way to address these issues would be to 
+get a professor interested in using this data set for a class. Then having an 
 assignment where students submit additional data points. I am also curious if 
 you could use the Yelp API to label restaurants and bars along with what type 
 of cuisine they are (from a technical standpoint I think yes, from a ToS 
