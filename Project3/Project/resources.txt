@@ -1,1 +1,16 @@
-1. The case study from this course
+The case study from this course
+
+Stackoverflow.com
+	https://stackoverflow.com/questions/2189393/how-to-create-a-new-datebasenamed-xx-db-using-python-and-sqlite3
+	https://stackoverflow.com/questions/525512/drop-all-tables-command
+	https://stackoverflow.com/questions/19859282/check-if-a-string-contains-a-number
+
+Docs:
+	https://www.sqlite.org/lang_createtable.html
+	https://www.sqlite.org/datatype3.html
+	http://www.w3schools.com/sql/sql_notnull.asp
+
+Random:
+	http://alvinalexander.com/android/sqlite-script-read-execute-howhttp://www.w3schools.com/sql/sql_distinct.asp
+
+I read a lot of different things before realizing I had a typo in a file path.

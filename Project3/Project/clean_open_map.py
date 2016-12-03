@@ -48,19 +48,16 @@ def is_street_name(elem):
     return (elem.attrib['k'] == "addr:street")
 
 def update_name(name, mapping):
-    '''Convert abreviations to a prefered name'''
+    '''Convert abbreviations to a preferred name'''
     road_type = name.split()[-1:][0]
     cleaned = mapping[road_type]
-    # print "start: " + name
     name = name.replace(road_type, cleaned)
-    # print "end: " + name
     return name
 
 def add_alt_name(elem, alt_name, element_id, tag_list):
     '''Add a new tag for alternate names'''
     type_key = k_prep(elem)
     tag_type = type_key[0]
-    tag_key = type_key[1]
     tag_list.append({'id': element_id,
             'key': 'alt_name',
             'value': alt_name,

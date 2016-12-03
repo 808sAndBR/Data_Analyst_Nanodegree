@@ -1,9 +1,9 @@
 ## OpenStreetMap Project
 ### Map Area
 
-Oxford, Ohio and surrounding area.
+Oxford, Ohio and the surrounding area.
 
-To get the raw data I used go to the [Overpass API](http://overpass-api.de/query_form.html) and pass the Query Form:
+To get the raw data I used, go to the [Overpass API](http://overpass-api.de/query_form.html) and pass the Query Form:
 ```(node(39.3587, -84.8419, 39.6961, -84.2033);<;);out meta;```
 
 This is where Miami University is located which is where I went to college, so I am excited to see what I can uncover!
@@ -144,8 +144,11 @@ FROM (SELECT uid
 ```
 SELECT count(*) FROM way_tags WHERE value = 'landfill';
 ```
+15
 
-### Additional statistics/exploraton
+I always thought it was odd how many landfills you go past driving south to Cincinnati, but this is WAY more than I expected!
+
+### Additional Exploration
 
 **University buildings added by user**
 
@@ -166,7 +169,116 @@ coopermj   | 59
 
 I was wondering if Miami would add their buildings themselves but it looks like these are normal users contributing them opposed to an official sounding user name.
 
+**Restaurants and Bars**
+
+```
+SELECT value, COUNT(*) 
+FROM node_tags
+WHERE value = 'restaurant' 
+OR value = 'bar'
+GROUP BY value;
+```
+
+value      | count
+-----------|------
+bar        | 2
+restaurant | 13
 
 
+Sadly restaurants and bars are not tagged well at all in this area, with it being a college town there are a lot of bars and it would have been interesting to look more into these.
 
+```
+SELECT way_tags.key, COUNT(*) as num
+FROM way_tags 
+    JOIN (SELECT DISTINCT(id) 
+    		FROM way_tags 
+    		WHERE way_tags.key = 'building' 
+    		AND way_tags.value = 'university') i
+    		ON way_tags.id = i.id
+GROUP BY way_tags.key
+ORDER BY num DESC
+LIMIT 20;
+```
 
+tag          | count 
+-------------|-------
+building     | 143
+name         | 139
+state        | 80
+county_name  | 78
+feature_id   | 78
+import_uuid  | 78
+source       | 77
+ele          | 74
+name_1       | 24
+amenity      | 6
+housenumber  | 5
+postcode     | 5
+street       | 5
+city         | 4
+leisure      | 4
+name_2       | 4
+operator     | 4
+website      | 4
+levels       | 3
+phone        | 3
+
+I was also a bit disappointed that there is not more interesting 
+information tagged to the buildings since it would have been interesting to
+look at things like percent of different types of school buildings (dorms, 
+administrative, dining halls, etc.).
+
+On the bright side we can get the names of the building and could potentially infer 
+the types of buildings, with the exception of being able to separate dorms from lecture halls since the majority of both are called "(Person's Name) Hall".
+
+```
+SELECT way_tags.value
+FROM way_tags 
+    JOIN (SELECT DISTINCT(id) FROM way_tags WHERE way_tags.key = 'building' AND way_tags.value = 'university') i
+    ON way_tags.id = i.id
+WHERE way_tags.key = 'name'
+LIMIT 10;
+```
+
+"Harry T. Wilks Conference Center"
+"Schwarm Hall"
+"Phelps Hall"
+"Mosler Hall"
+"Rentschler Hall"
+Gymnasium
+"Yager Stadium - West (Main Bldg)"
+"Yager Stadium - East (Concessions)"
+"Walter L. Gross Center"
+"Harris Dining Hall"
+
+**tiger entries that are reviewed**
+
+```
+SELECT tags.value, count(*)
+FROM (SELECT * 
+		FROM node_tags
+		UNION ALL SELECT *
+		FROM way_tags) tags
+WHERE type = 'tiger'
+AND key = 'reviewed'
+GROUP BY value;
+```
+value | count
+------|----
+no    | 10947
+yes   | 103
+
+After seeing how many things are entered from the tiger system, I was
+curious how many get reviewed. It would be interesting to see how the
+one percent here compares to areas with different demographics such as a
+large city and rural farm land. 
+
+### Ideas for improve the data set
+
+It would be awesome to get a lot of the bars and restaurants in Oxford tagged. I would also love to see at least what the primary purpose of each campus building is added to the data set. With it being a college campus, it seems like a really straight forward way to address these issues would be to get a professor interested in using this data set for a class and having an assignment where students submit additional data points. I am also curious if you could use the Yelp API to label restaurants and bars along with what type of cuisine they are (from a technical standpoint I think yes, from a ToS standpoint... probably unlikely). 
+
+With either of these ideas, I think the biggest challenge would be keeping all of the information up to date. New bars and restaurants open and shut down at an alarming rate in Oxford so it may be hard to ever have all the data correct. Miami has also been building a lot of new building lately.
+
+If we were able to pull it off though it would be a lot of interesting things we could look at like what type of restaurants are most common, breakdown of campus buildings by type, locations tagged as both a bar and as a restaurant, etc. 
+
+### Conclusion
