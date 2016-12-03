@@ -275,10 +275,33 @@ large city and rural farm land.
 
 ### Ideas for improve the data set
 
-It would be awesome to get a lot of the bars and restaurants in Oxford tagged. I would also love to see at least what the primary purpose of each campus building is added to the data set. With it being a college campus, it seems like a really straight forward way to address these issues would be to get a professor interested in using this data set for a class and having an assignment where students submit additional data points. I am also curious if you could use the Yelp API to label restaurants and bars along with what type of cuisine they are (from a technical standpoint I think yes, from a ToS standpoint... probably unlikely). 
+It would be awesome to get a lot of the bars and restaurants in Oxford 
+tagged. I would also love to see at least what the primary purpose of each 
+campus building is added to the data set. With it being a college campus, it 
+seems like a really straight forward way to address these issues would be to 
+get a professor interested in using this data set for a class and having an 
+assignment where students submit additional data points. I am also curious if 
+you could use the Yelp API to label restaurants and bars along with what type 
+of cuisine they are (from a technical standpoint I think yes, from a ToS 
+standpoint... probably unlikely). 
 
-With either of these ideas, I think the biggest challenge would be keeping all of the information up to date. New bars and restaurants open and shut down at an alarming rate in Oxford so it may be hard to ever have all the data correct. Miami has also been building a lot of new building lately.
+With either of these ideas, I think the biggest challenge would be keeping all
+of the information up to date. New bars and restaurants open and shut down at 
+an alarming rate in Oxford so it may be hard to ever have all the data correct.
+Miami has also been building a lot of new building lately.
 
-If we were able to pull it off though it would be a lot of interesting things we could look at like what type of restaurants are most common, breakdown of campus buildings by type, locations tagged as both a bar and as a restaurant, etc. 
+If we were able to pull it off though it would be a lot of interesting things we 
+could look at like what type of restaurants are most common, breakdown of campus
+buildings by type, locations tagged as both a bar and as a restaurant, etc. 
 
 ### Conclusion
+
+The Miami University campus seems to be tagged pretty well, even if they do not 
+have quite as much information as I would like. Oxford seems to be really missing
+a lot of information though, especially when it comes to buildings that are of 
+public interest. 
+
+It would be really nice to see a company like Google or Yelp give back to the 
+OpenStreetMap community by feeding in at least the building/company names which
+they have, since you see the OpenStreetMap copy write in the corner of all their
+maps and they clearly benefit from it.
