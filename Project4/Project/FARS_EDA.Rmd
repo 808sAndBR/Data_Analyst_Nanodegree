@@ -15,12 +15,107 @@ require(tidyverse)
 ```
 
 ```{r load_data}
-accidents <- read_csv("Project/FARS2015NationalCSV/accident.csv")
-
+accidents <- read_csv("FARS2015NationalCSV/accident.csv")
+vehicles <- read_csv("FARS2015NationalCSV/vehicle.csv")
 
 ```
 
 ```{r}
-getwd()
+head(accidents)
+head(vehicles)
 ```
+
+
+### How many fatalities usually occure?
+
+```{r}
+ggplot(data = accidents, aes(x = FATALS)) +
+    geom_histogram(binwidth = 1) +
+    ggtitle("Total fatalities in collision")
+
+```
+
+
+### How many vehicles are involved in accidents with fatalities?
+
+```{r}
+
+ggplot(data = accidents, aes(x = VE_TOTAL)) +
+    geom_histogram(binwidth = 1) +
+    ggtitle("Total vehicles in collision")
+
+```
+
+1-3 vehicles involved is so dominat that we cant even see that there are some
+rare large pileups ranging all the way to 58 cars involved!
+
+```{r}
+table(accidents$VE_TOTAL)
+```
+
+### What time of day do accidents occur?
+```{r}
+
+group_by(accidents, HOUR) %>%
+    filter(HOUR != 99) %>%
+    summarise(fatalities = sum(FATALS)) %>%
+    ggplot(aes(x = HOUR, fatalities)) +
+        geom_line()+
+        ggtitle("Collision per hour")
+```
+
+
+#### Does it change from month to month?
+
+```{r fig.height=10}
+group_by(accidents, MONTH, HOUR) %>%
+    filter(HOUR != 99) %>%
+    summarise(fatalities = sum(FATALS)) %>%
+    ggplot(aes(x = HOUR, fatalities)) +
+        geom_line()+
+        facet_grid(MONTH ~.) +
+        ggtitle("Collision per hour by month")
+
+```
+
+#### What about by week?
+
+```{r}
+group_by(accidents, DAY_WEEK, HOUR) %>%
+    filter(HOUR != 99) %>%
+    summarise(fatalities = sum(FATALS)) %>%
+    ggplot(aes(x = HOUR, fatalities)) +
+        geom_line()+
+        facet_grid(DAY_WEEK ~.) +
+        ggtitle("Collision per hour by month")
+
+```
+
+### When are drunk driver incidents?
+
+```{r}
+mutate(accidents, DRUNK = DRUNK_DR > 0) %>%
+    group_by(DAY_WEEK, HOUR, DRUNK) %>%
+    filter(HOUR != 99) %>%
+    summarise(fatalities = sum(FATALS)) %>%
+    ggplot(aes(x = HOUR, fatalities)) +
+        geom_line()+
+        facet_grid(DAY_WEEK ~ DRUNK) +
+        ggtitle("Collision per hour by weekeday involving drunk drivers")
+
+
+```
+
+
+# Ideas to plot
+
+Maps
+
+* Heat map (will just be population map probably) 
+* Drunk driving incidents in state / tot in state 
+* Drunk driving % by month (does it peak arround holidays?)
+* Most dangerious driving days of the year
+
+
+
 
