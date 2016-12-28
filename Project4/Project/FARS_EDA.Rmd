@@ -11,13 +11,59 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
 
 ```{r libraries}
 require(tidyverse)
+require(ggmap)
+require(stringr)
 
 ```
 
 ```{r load_data}
 accidents <- read_csv("FARS2015NationalCSV/accident.csv")
 vehicles <- read_csv("FARS2015NationalCSV/vehicle.csv")
+```
 
+```{r data prep}
+# There can be multiple drunk people but I usually want to know if there are any
+accidents$DRUNK <- accidents$DRUNK_DR > 0
+
+# They provide this in a dreadful format burried in the data manual this 
+# makes it uasable to map codes to states.
+raw_states <- "01 Alabama 30 Montana
+02 Alaska 31 Nebraska
+03 American Samoa 32 Nevada
+04 Arizona 33 New Hampshire
+05 Arkansas 34 New Jersey
+06 California 35 New Mexico
+08 Colorado 36 New York
+09 Connecticut 37 North Carolina
+10 Delaware 38 North Dakota
+11 District of Columbia 39 Ohio
+12 Florida 40 Oklahoma
+13 Georgia 41 Oregon
+14 Guam 42 Pennsylvania
+15 Hawaii 43 Puerto Rico
+16 Idaho 44 Rhode Island
+17 Illinois 45 South Carolina
+18 Indiana 46 South Dakota
+19 Iowa 47 Tennessee
+20 Kansas 48 Texas
+21 Kentucky 49 Utah
+22 Louisiana 50 Vermont
+23 Maine 51 Virginia
+24 Maryland 52 Virgin Islands (Since 2004)
+25 Massachusetts 53 Washington
+26 Michigan 54 West Virginia
+27 Minnesota 55 Wisconsin
+28 Mississippi 56 Wyoming
+29 Missouri"
+
+states <- str_replace(raw_states, ' \\(Since 2004\\)', '') %>%
+            str_split('\\s(?=[0-9])') %>%
+            unlist() %>%
+            str_split_fixed(' ', 2) %>%
+            as_data_frame()
+
+names(states) <- c("st_code", "st_name")
+states$st_code <- as.numeric(states$st_code)
 ```
 
 ```{r}
@@ -69,6 +115,7 @@ group_by(accidents, HOUR) %>%
 
 ```{r fig.height=10}
 group_by(accidents, MONTH, HOUR) %>%
+    # 99 means unkown
     filter(HOUR != 99) %>%
     summarise(fatalities = sum(FATALS)) %>%
     ggplot(aes(x = HOUR, fatalities)) +
@@ -94,14 +141,102 @@ group_by(accidents, DAY_WEEK, HOUR) %>%
 ### When are drunk driver incidents?
 
 ```{r}
-mutate(accidents, DRUNK = DRUNK_DR > 0) %>%
-    group_by(DAY_WEEK, HOUR, DRUNK) %>%
+group_by(accidents, DAY_WEEK, HOUR, DRUNK) %>%
     filter(HOUR != 99) %>%
     summarise(fatalities = sum(FATALS)) %>%
     ggplot(aes(x = HOUR, fatalities)) +
         geom_line()+
         facet_grid(DAY_WEEK ~ DRUNK) +
         ggtitle("Collision per hour by weekeday involving drunk drivers")
+
+
+```
+
+```{r}
+
+drunk_by_state <- group_by(accidents, STATE) %>%
+                        mutate(in_state = n()) %>%
+                        group_by(STATE, DRUNK, in_state) %>%
+                        summarise(state_drunk = n()) %>%
+                        mutate(percent_drunk = round(
+                            (state_drunk/in_state) * 100, 2)) %>%
+                        filter(DRUNK == TRUE) %>%
+                        ungroup() %>%
+                        arrange(percent_drunk)
+
+drunk_by_state <- inner_join(drunk_by_state, states,
+                             by = c('STATE' = 'st_code'))
+
+# This could be an good one to really clean up and get the point across
+tail(drunk_by_state, 10) %>%
+    arrange(desc(percent_drunk)) %>%
+    ggplot(aes(x= reorder(st_name, percent_drunk), y = percent_drunk)) +
+        geom_bar(stat = 'identity') +
+        coord_flip() +
+        labs(title = "Highest percent of fatal accidents involve a drunk driver")
+
+
+
+```
+
+
+### Where are crashes occuring?
+
+```{r}
+ggplot(data = accidents, aes(x = LONGITUD, y = LATITUDE)) +
+           geom_point()
+```
+
+Alright the data looks like a smashed map, and if we check the data guide we 
+see: 
+
+LONGITUD | Meaning
+---------|-------------
+DDD.DDDD | Actual Degrees
+777.7777 | Not Reported
+888.8888 | Not Available (If State Exempt)
+999.9999 | Unknown
+
+So we can drop any longitude greater than 0 since valid US locations should be 
+negative, then we are ready to plot.
+
+```{r}
+valid_location <- filter(accidents, LONGITUD < 0)
+
+us <- c(left = -125, bottom = 25.75, right = -67, top = 49)
+map <- get_stamenmap(us, zoom = 5, maptype = "toner-lite")
+ggmap(map)+
+    stat_density_2d(data = valid_location, 
+                    aes(x=LONGITUD, y= LATITUDE, fill = ..level..), 
+                    geom = "polygon", alpha = .3, color = NA) +
+    scale_fill_gradient2("Fatalities", 
+                         low = "green", mid = "yellow", high = "red", 
+                         midpoint = .002)
+
+
+```
+
+As heatmaps usually seem to turn out this is just a population map. This kind
+of validates that traffic fatalities happen where people live... which isn't 
+exactly shocking.
+
+```{r}
+drunk_percent <- mutate(valid_location, lon = round(LONGITUD,1), 
+                        lat = round(LATITUDE,1)) %>%
+                    group_by(lon, lat, DRUNK_DR) %>%
+                    summarise(n = n()) %>%
+                    mutate(per_drunk = DRUNK_DR/n)%>%
+                    group_by(lon,lat) %>%
+                    filter(max(per_drunk) == per_drunk) %>%
+                    arrange(lon, lat)
+
+ggmap(map)+
+    stat_density_2d(data = drunk_percent, 
+                    aes(x=lon, y= lat, fill = ..level..), 
+                    geom = "polygon", alpha = .3, color = NA) +
+                    scale_fill_gradient2("Fatalities", 
+                         low = "green", mid = "yellow", high = "red", 
+                         midpoint = .0015)
 
 
 ```
