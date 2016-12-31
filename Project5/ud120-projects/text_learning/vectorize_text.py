@@ -52,7 +52,7 @@ for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
             
             ### use str.replace() to remove any instances of the words
             ### ["sara", "shackleton", "chris", "germani"]
-            sigs = ["sara", "shackleton", "chris", "germani", "sshacklensf"]
+            sigs = ["sara", "shackleton", "chris", "germani", "sshacklensf", "cgermannsf"]
             for sig in sigs:
                 email_text = email_text.replace(sig, '')
                 
