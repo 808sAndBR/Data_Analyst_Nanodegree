@@ -30,7 +30,7 @@ with open("final_project_dataset.pkl", "r") as data_file:
 # please see POI_writeup.ipynb
 
 ### Task 3: Create new feature(s)
-# created in POI_writeup.ipynb but not used in final model
+# created in POI_writeup.ipynb 
 
 ### Store to my_dataset for easy export below.
 from collections import defaultdict
@@ -42,9 +42,6 @@ for person in my_dataset:
         if my_dataset[person][field] == 'NaN':
             my_dataset[person][field] = 0
 
-# outliers = ['LAY KENNETH L']
-
-# my_dataset = {person:my_dataset[person] for person in my_dataset if person not in outliers}
 ### Extract features and labels from dataset for local testing
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
@@ -54,9 +51,8 @@ labels, features = targetFeatureSplit(data)
 ### Note that if you want to do PCA or other multi-stage operations,
 ### you'll need to use Pipelines. For more info:
 ### http://scikit-learn.org/stable/modules/pipeline.html
-# My exploration is in POI_writeup.ipynb using final model below
 
-# Provided to give you a starting point. Try a variety of classifiers.
+# My exploration is in POI_writeup.ipynb using final model below
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
 ### using our testing script. Check the tester.py script in the final project
@@ -66,6 +62,8 @@ labels, features = targetFeatureSplit(data)
 ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 
 # Example starting point. Try investigating other evaluation techniques!
+
+# Please seee investigation to get this tuned model in POI_writeup.ipynb
 
 clf = DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=2,
             max_features='auto', max_leaf_nodes=None, min_samples_leaf=1,
