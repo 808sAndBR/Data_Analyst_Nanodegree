@@ -94,7 +94,7 @@ def load_classifier_and_data():
     with open(FEATURE_LIST_FILENAME, "r") as featurelist_infile:
         feature_list = pickle.load(featurelist_infile)
     return clf, dataset, feature_list
-
+    
 def main():
     ### load up student's classifier, dataset, and feature_list
     clf, dataset, feature_list = load_classifier_and_data()

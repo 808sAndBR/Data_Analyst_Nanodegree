@@ -67,7 +67,7 @@ labels, features = targetFeatureSplit(data)
 
 clf = DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=2,
             max_features='auto', max_leaf_nodes=None, min_samples_leaf=1,
-            min_samples_split=1, min_weight_fraction_leaf=0.0,
+            min_samples_split=1.0, min_weight_fraction_leaf=0.0,
             presort=False, random_state=1809, splitter='best')
 
 
