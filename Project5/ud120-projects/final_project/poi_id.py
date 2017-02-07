@@ -28,6 +28,7 @@ with open("final_project_dataset.pkl", "r") as data_file:
 
 ### Task 2: Remove outliers
 # please see POI_writeup.ipynb
+data_dict.pop('TOTAL')
 
 ### Task 3: Create new feature(s)
 # created in POI_writeup.ipynb 
