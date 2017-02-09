@@ -19,8 +19,7 @@ features_list = ['poi',
                 'shared_receipt_with_poi',
                 'deferral_payments',
                 'to_messages',
-                'from_messages',
-                'from_this_person_to_poi']
+                'from_messages']
                 
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
