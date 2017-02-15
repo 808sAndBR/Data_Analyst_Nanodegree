@@ -11780,7 +11780,7 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">graphviz</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">cross_val_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">cross_val_score</span><span class="p">,</span> <span class="n">StratifiedShuffleSplit</span>
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
 <span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">AdaBoostClassifier</span><span class="p">,</span> <span class="n">RandomForestClassifier</span>
 <span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFE</span>
@@ -11798,6 +11798,23 @@ div#notebook {
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/cross_validation.py:44: DeprecationWarning: This module was deprecated in version 0.18 in favor of the model_selection module into which all the refactored classes and functions are moved. Also note that the interface of the new CV iterators are different from that of this module. This module will be removed in 0.20.
+  &#34;This module will be removed in 0.20.&#34;, DeprecationWarning)
+/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/grid_search.py:43: DeprecationWarning: This module was deprecated in version 0.18 in favor of the model_selection module into which all the refactored classes and functions are moved. This module will be removed in 0.20.
+  DeprecationWarning)
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -12069,7 +12086,7 @@ With 18 of them (12.41%) being persons of interest
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">percent_missing</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cutoff_percent</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">):</span>
@@ -12106,6 +12123,7 @@ shared_receipt_with_poi 0.41
 restricted_stock_deferred 0.88
 total_stock_value 0.14
 expenses 0.35
+loan_advances 0.98
 from_messages 0.41
 other 0.37
 from_this_person_to_poi 0.41
@@ -12114,8 +12132,14 @@ deferred_income 0.67
 long_term_incentive 0.55
 email_address 0.23
 from_poi_to_this_person 0.41
-percent_from_emails_to_poi 0.41
-percent_emails_from_poi 0.41
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/pandas/core/ops.py:716: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
+  result = getattr(x, name)(y)
 </pre>
 </div>
 </div>
@@ -12360,7 +12384,7 @@ long_term_incentive 0.55
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Loop through creating boxplots looking for the biggest outliers</span>
@@ -12711,7 +12735,7 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>&lt;ggplot: (282988621)&gt;
+<pre>&lt;ggplot: (284119205)&gt;
 </pre>
 </div>
 </div>
@@ -12732,7 +12756,7 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># The outliers I selected from looking at the boxplots</span>
@@ -12759,7 +12783,7 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[47]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[11]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -12835,7 +12859,7 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[50]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Create new column for director bool</span>
@@ -12852,7 +12876,7 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[50]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[12]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -12871,6 +12895,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <th>restricted_stock_deferred</th>
       <th>total_stock_value</th>
       <th>...</th>
+      <th>from_messages</th>
+      <th>other</th>
       <th>from_this_person_to_poi</th>
       <th>poi</th>
       <th>director_fees</th>
@@ -12879,8 +12905,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <th>email_address</th>
       <th>from_poi_to_this_person</th>
       <th>director</th>
-      <th>percent_from_emails_to_poi</th>
-      <th>percent_emails_from_poi</th>
     </tr>
   </thead>
   <tbody>
@@ -12898,6 +12922,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>-44093</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>3285</td>
       <td>NaN</td>
@@ -12905,8 +12931,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>BHATNAGAR SANJAY</th>
@@ -12921,6 +12945,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>15456290</td>
       <td>NaN</td>
       <td>...</td>
+      <td>29</td>
+      <td>137864</td>
       <td>1</td>
       <td>False</td>
       <td>137864</td>
@@ -12929,8 +12955,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>sanjay.bhatnagar@enron.com</td>
       <td>0</td>
       <td>True</td>
-      <td>0.035</td>
-      <td>0.000</td>
     </tr>
     <tr>
       <th>BLAKE JR. NORMAN P</th>
@@ -12946,6 +12970,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>113784</td>
       <td>-113784</td>
@@ -12953,8 +12979,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>CHAN RONNIE</th>
@@ -12970,6 +12994,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>98784</td>
       <td>-98784</td>
@@ -12977,8 +13003,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>DUNCAN JOHN H</th>
@@ -12994,6 +13018,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>371750</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>102492</td>
       <td>-25000</td>
@@ -13001,8 +13027,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>GRAMM WENDY L</th>
@@ -13018,6 +13042,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>119292</td>
       <td>NaN</td>
@@ -13025,8 +13051,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>JAEDICKE ROBERT</th>
@@ -13042,6 +13066,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>431750</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>108750</td>
       <td>-25000</td>
@@ -13049,8 +13075,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>LEMAISTRE CHARLES</th>
@@ -13066,6 +13090,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>412878</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>112492</td>
       <td>-25000</td>
@@ -13073,8 +13099,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>MENDELSOHN JOHN</th>
@@ -13090,6 +13114,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>103750</td>
       <td>-103750</td>
@@ -13097,8 +13123,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>MEYER JEROME J</th>
@@ -13114,6 +13138,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>38346</td>
       <td>-38346</td>
@@ -13121,8 +13147,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>PEREIRA PAULO V. FERRAZ</th>
@@ -13138,6 +13162,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>101250</td>
       <td>-101250</td>
@@ -13145,8 +13171,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>POWERS WILLIAM</th>
@@ -13161,6 +13185,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>...</td>
+      <td>26</td>
+      <td>NaN</td>
       <td>0</td>
       <td>False</td>
       <td>17500</td>
@@ -13169,8 +13195,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>ken.powers@enron.com</td>
       <td>0</td>
       <td>True</td>
-      <td>0.000</td>
-      <td>0.000</td>
     </tr>
     <tr>
       <th>SAVAGE FRANK</th>
@@ -13186,6 +13210,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>125034</td>
       <td>-121284</td>
@@ -13193,8 +13219,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>URQUHART JOHN A</th>
@@ -13210,6 +13234,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>36666</td>
       <td>-36666</td>
@@ -13217,8 +13243,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>WAKEHAM JOHN</th>
@@ -13234,6 +13258,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>109298</td>
       <td>NaN</td>
@@ -13241,8 +13267,6 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
       <th>WINOKUR JR. HERBERT S</th>
@@ -13258,6 +13282,8 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>False</td>
       <td>108579</td>
       <td>-25000</td>
@@ -13265,12 +13291,10 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
       <td>NaN</td>
       <td>NaN</td>
       <td>True</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
   </tbody>
 </table>
-<p>16 rows × 23 columns</p>
+<p>16 rows × 21 columns</p>
 </div>
 </div>
 
@@ -13285,14 +13309,14 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I am also making features of what percent of emails were to/from pois instead of the straight counts that we have in the data set.</p>
+<p>I am also making features of what percent of emails were to/from pois instead of the straight counts that we have in the data set. I think that taking into account the number of emails sent/received will give a more realistic picture of their activity since people who have been at the company longer have had more time to send emails and since different jobs lend to different frequencies of sending emails.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">email_percents</span><span class="p">(</span><span class="n">poi_emails</span><span class="p">,</span> <span class="n">all_emails</span><span class="p">):</span>
@@ -13327,7 +13351,7 @@ AAAAgAIQAAAAAKAA/h9JC4TwIzyo2QAAAABJRU5ErkJggg==
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;from_this_person_to_poi&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;from_poi_to_this_person&#39;</span><span class="p">,</span>
@@ -13991,11 +14015,11 @@ iYiIiIiIiGwck3ciIiIiIiIiG/d/brGGz7Z85vwAAAAASUVORK5CYII=
 
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[56]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[14]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;ggplot: (280886333)&gt;</pre>
+<pre>&lt;ggplot: (284228437)&gt;</pre>
 </div>
 
 </div>
@@ -14006,7 +14030,7 @@ iYiIiIiIiGwck3ciIiIiIiIiG/d/brGGz7Z85vwAAAAASUVORK5CYII=
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[57]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">ggplot</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;percent_from_emails_to_poi&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;percent_emails_from_poi&#39;</span><span class="p">,</span>
@@ -14730,11 +14754,11 @@ AAAAAGBzhHcAAAAAAGyO8A4AAAAAgM0R3gEAAAAAsDnCOwAAAAAANkd4BwAAAADA5gjvAAAAAADY
 
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[57]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[15]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;ggplot: (282116937)&gt;</pre>
+<pre>&lt;ggplot: (284240633)&gt;</pre>
 </div>
 
 </div>
@@ -14758,7 +14782,7 @@ AAAAAGBzhHcAAAAAAGyO8A4AAAAAgM0R3gEAAAAAsDnCOwAAAAAANkd4BwAAAADA5gjvAAAAAADY
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;percent_from_emails_to_poi&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">][</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;percent_from_emails_to_poi&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">][</span>
     <span class="p">[</span><span class="s1">&#39;from_this_person_to_poi&#39;</span><span class="p">,</span> <span class="s1">&#39;from_messages&#39;</span><span class="p">,</span> <span class="s1">&#39;percent_from_emails_to_poi&#39;</span><span class="p">]]</span>
 </pre></div>
 
@@ -14824,7 +14848,7 @@ AAAAAGBzhHcAAAAAAGyO8A4AAAAAgM0R3gEAAAAAsDnCOwAAAAAANkd4BwAAAADA5gjvAAAAAADY
 
 <span class="c1"># Split into test and train datasets</span>
 <span class="n">features_train</span><span class="p">,</span> <span class="n">features_test</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">,</span> <span class="n">labels_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
-    <span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1809</span><span class="p">)</span>
+    <span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">1809</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -14846,17 +14870,17 @@ strategies. I started with feature importance from decision tree.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Create and fit decison tree to use for feature importance</span>
-<span class="n">dt_clf</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">1809</span><span class="p">)</span>
+<span class="n">dt_clf</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">1809</span><span class="p">)</span>
 <span class="n">dt_clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
 
 <span class="c1"># Get features into a tidy format to be easily reviewed</span>
 <span class="n">importance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;features&#39;</span><span class="p">:</span><span class="n">features_train</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="s1">&#39;importance&#39;</span><span class="p">:</span><span class="n">dt_clf</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">})</span>
-<span class="n">dt_important_features</span> <span class="o">=</span> <span class="n">importance_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;importance&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span> <span class="bp">False</span><span class="p">)[</span><span class="s1">&#39;features&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
-<span class="n">importance_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;importance&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+<span class="n">dt_important_features</span> <span class="o">=</span> <span class="n">importance_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;importance&#39;</span><span class="p">,</span> <span class="n">ascending</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)[</span><span class="s1">&#39;features&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+<span class="n">importance_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;importance&#39;</span><span class="p">,</span> <span class="n">ascending</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -14867,7 +14891,7 @@ strategies. I started with feature importance from decision tree.</p>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[59]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[18]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -14986,14 +15010,14 @@ strategies. I started with feature importance from decision tree.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Next I want to fit a logistic regression and do a recursive feature elimination. For this we need to first scale the data since we are using regression.</p>
+<p>Next I want to fit a logistic regression and do a recursive feature elimination. For this we need to first scale the data since we are using regression. We will also be using this scaled data later for creating featres from principal component analysis and for exploring using support vector machines for predictions.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Scale the training and testing features in a consistant way</span>
@@ -15031,7 +15055,7 @@ strategies. I started with feature importance from decision tree.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Compare RFE selections with decision tree importance</span>
@@ -15046,7 +15070,7 @@ strategies. I started with feature importance from decision tree.</p>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[21]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[20]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -15191,7 +15215,7 @@ strategies. I started with feature importance from decision tree.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Train PCA and create the new principal components</span>
@@ -15794,7 +15818,7 @@ REREREREaYATAERERERERERp4C/3c4g21gu+jwAAAABJRU5ErkJggg==
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>&lt;ggplot: (280412969)&gt;
+<pre>&lt;ggplot: (284210373)&gt;
 </pre>
 </div>
 </div>
@@ -15805,7 +15829,7 @@ REREREREaYATAERERERERERp4C/3c4g21gu+jwAAAABJRU5ErkJggg==
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Use the first six principal components since that is when improvements level off</span>
@@ -15851,7 +15875,7 @@ REREREREaYATAERERERERERp4C/3c4g21gu+jwAAAABJRU5ErkJggg==
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Adding one to the number of features to account for how slicing works</span>
@@ -15902,7 +15926,7 @@ dtype: float64
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Drop one of the featrures from all sets with over .75 correlation</span>
@@ -15952,7 +15976,7 @@ dtype: float64
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Check if RFE is the same in both feature sets</span>
@@ -15976,7 +16000,7 @@ dtype: float64
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[26]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[25]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -16087,7 +16111,7 @@ dtype: float64
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Make scaled featues DataFrames for consistency and feature selection below</span>
@@ -16116,7 +16140,7 @@ dtype: float64
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">algos_tried</span> <span class="o">=</span> <span class="p">[]</span>
@@ -16188,7 +16212,7 @@ dtype: float64
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Test each of the ml algos we went over in the course with default values</span>
@@ -16209,11 +16233,11 @@ dtype: float64
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/cross_validation.py:516: Warning: The least populated class in y has only 11 members, which is too few. The minimum number of labels for any class cannot be less than n_folds=20.
+<pre>/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/cross_validation.py:552: Warning: The least populated class in y has only 11 members, which is too few. The minimum number of labels for any class cannot be less than n_folds=20.
   % (min_labels, self.n_folds)), Warning)
-/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/metrics/classification.py:1076: UndefinedMetricWarning: Recall is ill-defined and being set to 0.0 due to no true samples.
+/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/metrics/classification.py:1115: UndefinedMetricWarning: Recall is ill-defined and being set to 0.0 due to no true samples.
   &#39;recall&#39;, &#39;true&#39;, average, warn_for)
-/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/metrics/classification.py:1074: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples.
+/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/metrics/classification.py:1113: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 due to no predicted samples.
   &#39;precision&#39;, &#39;predicted&#39;, average, warn_for)
 </pre>
 </div>
@@ -16235,7 +16259,7 @@ dtype: float64
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Convert to data frame for easier review</span>
@@ -16251,7 +16275,7 @@ dtype: float64
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[30]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[29]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -16525,18 +16549,18 @@ dtype: float64
     </tr>
     <tr>
       <th>23</th>
-      <td>0.869</td>
+      <td>0.886</td>
       <td>Random Forest</td>
       <td>PCA features</td>
       <td>False</td>
-      <td>1.000</td>
-      <td>0.000</td>
-      <td>0.000</td>
+      <td>0.850</td>
+      <td>0.150</td>
+      <td>0.150</td>
       <td>True</td>
     </tr>
     <tr>
       <th>24</th>
-      <td>0.853</td>
+      <td>0.861</td>
       <td>AdaBoost</td>
       <td>All</td>
       <td>False</td>
@@ -16623,7 +16647,7 @@ dtype: float64
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Focus on rows I found most interesting</span>
@@ -16638,7 +16662,7 @@ dtype: float64
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[31]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[30]:</div>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -16725,7 +16749,7 @@ dtype: float64
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Set all of the decision tree parameters to try</span>
@@ -16733,14 +16757,17 @@ dtype: float64
               <span class="s1">&#39;max_features&#39;</span><span class="p">:[</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="s1">&#39;sqrt&#39;</span><span class="p">,</span> <span class="s1">&#39;log2&#39;</span><span class="p">],</span>
               <span class="s1">&#39;max_depth&#39;</span><span class="p">:[</span><span class="bp">None</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
               <span class="s1">&#39;min_samples_leaf&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
-              <span class="s1">&#39;min_samples_split&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">25</span><span class="p">]}</span>
+              <span class="s1">&#39;min_samples_split&#39;</span><span class="p">:[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">25</span><span class="p">]}</span>
 
 <span class="c1"># Create the classifier</span>
 <span class="n">dt_clf</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">1809</span><span class="p">)</span>
 
+<span class="c1"># Set up cross validator (will be used for tuning all classifiers)</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">StratifiedShuffleSplit</span><span class="p">(</span><span class="n">labels_train</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">1809</span><span class="p">)</span>
 <span class="c1"># Grid search all the parameters passed above</span>
 <span class="c1"># Caution: using a lower cv seems to give very overfit results </span>
-<span class="n">tune_clf</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">dt_clf</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">scoring</span> <span class="o">=</span> <span class="s1">&#39;f1&#39;</span><span class="p">,</span> <span class="n">cv</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+<span class="c1">#tune_clf = GridSearchCV(dt_clf, parameters, scoring = &#39;f1&#39;, cv = 25)</span>
+<span class="n">tune_clf</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">dt_clf</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">scoring</span> <span class="o">=</span> <span class="s1">&#39;f1&#39;</span><span class="p">,</span> <span class="n">cv</span> <span class="o">=</span> <span class="n">cv</span><span class="p">)</span>
 <span class="n">tune_clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">[</span><span class="n">dt_important_features</span><span class="p">],</span> <span class="n">labels_train</span><span class="p">)</span>
 </pre></div>
 
@@ -16754,24 +16781,26 @@ dtype: float64
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/cross_validation.py:516: Warning: The least populated class in y has only 11 members, which is too few. The minimum number of labels for any class cannot be less than n_folds=25.
-  % (min_labels, self.n_folds)), Warning)
-/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/metrics/classification.py:1074: UndefinedMetricWarning: F-score is ill-defined and being set to 0.0 due to no predicted samples.
+<pre>/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/metrics/classification.py:1113: UndefinedMetricWarning: F-score is ill-defined and being set to 0.0 due to no predicted samples.
   &#39;precision&#39;, &#39;predicted&#39;, average, warn_for)
-/Users/scottbrenstuhl/Projects/Data_Analyst_Nanodegree/venv/lib/python2.7/site-packages/sklearn/metrics/classification.py:1076: UndefinedMetricWarning: F-score is ill-defined and being set to 0.0 due to no true samples.
-  &#39;recall&#39;, &#39;true&#39;, average, warn_for)
 </pre>
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[32]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[31]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>DecisionTreeClassifier(class_weight=None, criterion=&#39;gini&#39;, max_depth=2,
-            max_features=&#39;auto&#39;, max_leaf_nodes=None, min_samples_leaf=1,
-            min_samples_split=1, min_weight_fraction_leaf=0.0,
-            presort=False, random_state=1809, splitter=&#39;best&#39;)</pre>
+<pre>GridSearchCV(cv=StratifiedShuffleSplit(labels=[False  True ..., False False], n_iter=25, test_size=0.1, random_state=1809),
+       error_score=&#39;raise&#39;,
+       estimator=DecisionTreeClassifier(class_weight=None, criterion=&#39;gini&#39;, max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=1809, splitter=&#39;best&#39;),
+       fit_params={}, iid=True, n_jobs=1,
+       param_grid={&#39;max_features&#39;: [&#39;auto&#39;, &#39;sqrt&#39;, &#39;log2&#39;], &#39;min_samples_split&#39;: [2, 4, 10, 15, 20, 25], &#39;criterion&#39;: (&#39;gini&#39;, &#39;entropy&#39;), &#39;max_depth&#39;: [None, 1, 2, 4], &#39;min_samples_leaf&#39;: [1, 2, 3, 4]},
+       pre_dispatch=&#39;2*n_jobs&#39;, refit=True, scoring=&#39;f1&#39;, verbose=0)</pre>
 </div>
 
 </div>
@@ -16779,6 +16808,16 @@ dtype: float64
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This tuning is important because while as humans we can think through what models might make the best sense and compare the trade offs between them, doing so for all of the individual parameters in our algorithem would be incredibly difficult, if not impossible (it certainly is at my skill level). By using a grid search stratagy we can compare many parameter settings and find which ones perform best according to the scoring that we set. This allows us to improve in our ultimate goal of predicting which Enron employees are persons of interest.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -16795,7 +16834,7 @@ dtype: float64
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">pred</span> <span class="o">=</span> <span class="n">tune_clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">features_test</span><span class="p">[</span><span class="n">dt_important_features</span><span class="p">])</span>
@@ -16837,7 +16876,7 @@ test recall: 0.142857142857
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">pred</span> <span class="o">=</span> <span class="n">tune_clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">features_train</span><span class="p">[</span><span class="n">dt_important_features</span><span class="p">])</span>
@@ -16879,7 +16918,7 @@ train recall: 0.727272727273
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Create a key for what features map to numbers in the tree graph</span>
@@ -16919,7 +16958,7 @@ X[5] : from_this_person_to_poi
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[35]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[39]:</div>
 
 <div class="output_svg output_subarea output_execute_result">
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -17043,7 +17082,7 @@ X[5] : from_this_person_to_poi
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Display model and feature list to use in poi_id.py</span>
@@ -17066,13 +17105,14 @@ X[5] : from_this_person_to_poi
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[42]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[35]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>DecisionTreeClassifier(class_weight=None, criterion=&#39;gini&#39;, max_depth=2,
-            max_features=&#39;auto&#39;, max_leaf_nodes=None, min_samples_leaf=1,
-            min_samples_split=1, min_weight_fraction_leaf=0.0,
+            max_features=&#39;auto&#39;, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
             presort=False, random_state=1809, splitter=&#39;best&#39;)</pre>
 </div>
 
@@ -17094,7 +17134,7 @@ X[5] : from_this_person_to_poi
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Put the above values into the poi_id script before running</span>
@@ -17113,11 +17153,12 @@ X[5] : from_this_person_to_poi
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>DecisionTreeClassifier(class_weight=None, criterion=&#39;gini&#39;, max_depth=2,
-            max_features=&#39;auto&#39;, max_leaf_nodes=None, min_samples_leaf=1,
-            min_samples_split=1, min_weight_fraction_leaf=0.0,
+            max_features=&#39;auto&#39;, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
             presort=False, random_state=1809, splitter=&#39;best&#39;)
-	Accuracy: 0.82433	Precision: 0.46170	Recall: 0.32550	F1: 0.38182	F2: 0.34591
-	Total predictions: 12000	True positives:  651	False positives:  759	False negatives: 1349	True negatives: 9241
+	Accuracy: 0.82750	Precision: 0.47482	Recall: 0.33000	F1: 0.38938	F2: 0.35144
+	Total predictions: 12000	True positives:  660	False positives:  730	False negatives: 1340	True negatives: 9270
 
 </pre>
 </div>
@@ -17142,11 +17183,97 @@ X[5] : from_this_person_to_poi
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>So using the final tuned decision tree classifier, people are labeled correctly 82% of the time. It has a precision of .46 which means 46% of the time that the model says they are a person of interest, they will be. It's recall is .32, so 32% of the time someone is a person of interest they will be labeled as one.</p>
-<p>With this in mind, if we are investigating Enron employees this may be a good place to start but we certainly wont want to let anyone off the hook just because the model didnt label them as a POI.</p>
+<h3 id="Revisiting-feature-engineering">Revisiting feature engineering<a class="anchor-link" href="#Revisiting-feature-engineering">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since from_this_person_to_poi is the only feature that I created which survived feature and model selection to be in the final model, let's see what sort of impact it had. I have created a copy of the poi_id.py file used to cross validate and removed from_this_person_to_poi from the feature list (in poi_id_to_poi_removed.py).</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="o">%</span><span class="k">run</span> ./poi_id_to_poi_removed.py
+<span class="o">%</span><span class="k">run</span> ./tester.py
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>DecisionTreeClassifier(class_weight=None, criterion=&#39;gini&#39;, max_depth=2,
+            max_features=&#39;auto&#39;, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=1809, splitter=&#39;best&#39;)
+	Accuracy: 0.80992	Precision: 0.08555	Recall: 0.01450	F1: 0.02480	F2: 0.01739
+	Total predictions: 12000	True positives:   29	False positives:  310	False negatives: 1971	True negatives: 9690
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I'm actually pretty surprised by the amount of which this decimates both the precision and recall. Without the from_this_person_to_poi field precision becomes 8.5% and recall drops to 1.5% which is pretty much useless.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Using the final tuned decision tree classifier, people are labeled correctly 82% of the time. It has a precision of .46 which means 46% of the time that the model says they are a person of interest, they will be. It's recall is .32, so 32% of the time someone is a person of interest they will be labeled as one.</p>
+<p>With this in mind, if we are investigating Enron employees this may be a good place to start but we certainly won't want to let anyone off the hook just because the model didn't label them as a POI.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
     </div>
   </div>
