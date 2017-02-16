@@ -19,6 +19,7 @@ require(stringr)
 ```{r load_data}
 accidents <- read_csv("FARS2015NationalCSV/accident.csv")
 vehicles <- read_csv("FARS2015NationalCSV/vehicle.csv")
+person <- read_csv("FARS2015NationalCSV/person.csv")
 ```
 
 ```{r data prep}
@@ -72,19 +73,20 @@ head(vehicles)
 ```
 
 
-### How many fatalities usually occure?
+### How many fatalities occure per accident?
 
-```{r}
+```{r fatalities_per_accident}
 ggplot(data = accidents, aes(x = FATALS)) +
     geom_histogram(binwidth = 1) +
-    ggtitle("Total fatalities in collision")
+    ggtitle("Total fatalities in collision") + 
+    scale_x_continuous(breaks = seq(1,10))
 
 ```
 
 
 ### How many vehicles are involved in accidents with fatalities?
 
-```{r}
+```{r vehicles_per_accident}
 
 ggplot(data = accidents, aes(x = VE_TOTAL)) +
     geom_histogram(binwidth = 1) +
@@ -100,7 +102,7 @@ table(accidents$VE_TOTAL)
 ```
 
 ### What time of day do accidents occur?
-```{r}
+```{r collisions_per_hour}
 
 group_by(accidents, HOUR) %>%
     filter(HOUR != 99) %>%
@@ -113,34 +115,37 @@ group_by(accidents, HOUR) %>%
 
 #### Does it change from month to month?
 
-```{r fig.height=10}
-group_by(accidents, MONTH, HOUR) %>%
+```{r collisions_per_month}
+# fig.height=10
+accidents %>%    
+    mutate(MONTH = as.character(MONTH)) %>%
+    group_by(MONTH, HOUR) %>%
     # 99 means unkown
     filter(HOUR != 99) %>%
     summarise(fatalities = sum(FATALS)) %>%
-    ggplot(aes(x = HOUR, fatalities)) +
+    ggplot(aes(x = HOUR, fatalities, color = MONTH)) +
         geom_line()+
-        facet_grid(MONTH ~.) +
+        #facet_grid(MONTH ~.) +
         ggtitle("Collision per hour by month")
 
 ```
 
 #### What about by week?
 
-```{r}
+```{r collisions_per_week}
 group_by(accidents, DAY_WEEK, HOUR) %>%
     filter(HOUR != 99) %>%
     summarise(fatalities = sum(FATALS)) %>%
     ggplot(aes(x = HOUR, fatalities)) +
         geom_line()+
         facet_grid(DAY_WEEK ~.) +
-        ggtitle("Collision per hour by month")
+        ggtitle("Collision per hour by weekday")
 
 ```
 
 ### When are drunk driver incidents?
 
-```{r}
+```{r drunk_by_weekday_by_hour}
 group_by(accidents, DAY_WEEK, HOUR, DRUNK) %>%
     filter(HOUR != 99) %>%
     summarise(fatalities = sum(FATALS)) %>%
@@ -152,7 +157,7 @@ group_by(accidents, DAY_WEEK, HOUR, DRUNK) %>%
 
 ```
 
-```{r}
+```{r highest_drunk_by_state}
 
 drunk_by_state <- group_by(accidents, STATE) %>%
                         mutate(in_state = n()) %>%
@@ -169,20 +174,25 @@ drunk_by_state <- inner_join(drunk_by_state, states,
 
 # This could be an good one to really clean up and get the point across
 tail(drunk_by_state, 10) %>%
-    arrange(desc(percent_drunk)) %>%
     ggplot(aes(x= reorder(st_name, percent_drunk), y = percent_drunk)) +
         geom_bar(stat = 'identity') +
         coord_flip() +
         labs(title = "Highest percent of fatal accidents involve a drunk driver")
 
+```
 
-
+```{r lowest_drunk_per_state}
+head(drunk_by_state, 10) %>%
+    ggplot(aes(x= reorder(st_name, desc(percent_drunk)), y = percent_drunk)) +
+        geom_bar(stat = 'identity') +
+        coord_flip() +
+        labs(title = "Lowest percent of fatal accidents involve a drunk driver")
 ```
 
 
 ### Where are crashes occuring?
 
-```{r}
+```{r plot_lat_long}
 ggplot(data = accidents, aes(x = LONGITUD, y = LATITUDE)) +
            geom_point()
 ```
@@ -200,7 +210,7 @@ DDD.DDDD | Actual Degrees
 So we can drop any longitude greater than 0 since valid US locations should be 
 negative, then we are ready to plot.
 
-```{r}
+```{r collision_map}
 valid_location <- filter(accidents, LONGITUD < 0)
 
 us <- c(left = -125, bottom = 25.75, right = -67, top = 49)
@@ -220,7 +230,7 @@ As heatmaps usually seem to turn out this is just a population map. This kind
 of validates that traffic fatalities happen where people live... which isn't 
 exactly shocking.
 
-```{r}
+```{r drunk_map}
 drunk_percent <- mutate(valid_location, lon = round(LONGITUD,1), 
                         lat = round(LATITUDE,1)) %>%
                     group_by(lon, lat, DRUNK_DR) %>%
@@ -241,6 +251,17 @@ ggmap(map)+
 
 ```
 
+## Person data
+
+```{r person_hist}
+person %>%
+    filter(AGE < 500) %>%
+    ggplot(aes(x=AGE)) +
+    geom_histogram()
+
+```
+
+
 
 # Ideas to plot
 
@@ -250,6 +271,23 @@ Maps
 * Drunk driving incidents in state / tot in state 
 * Drunk driving % by month (does it peak arround holidays?)
 * Most dangerious driving days of the year
+
+Person Data:
+Age (possible to compair to age distribution of state?)
+Compair types of restraints and injury severity
+Drinking vs. Age
+Drugs vs. age
+Drugs by state
+Breakdowns of cycalist info
+Lag time from crash to death
+How offten are they at work
+* Is there something interesting here when combined with time of day?
+LOCATION for where non-motorists were durrint time of crash
+
+```{r count_plots}
+length(list.files("Figs/"))
+```
+
 
 
 
