@@ -231,27 +231,33 @@ of validates that traffic fatalities happen where people live... which isn't
 exactly shocking.
 
 ```{r drunk_map}
-drunk_percent <- mutate(valid_location, lon = round(LONGITUD,1), 
-                        lat = round(LATITUDE,1)) %>%
-                    group_by(lon, lat, DRUNK_DR) %>%
-                    summarise(n = n()) %>%
-                    mutate(per_drunk = DRUNK_DR/n)%>%
-                    group_by(lon,lat) %>%
-                    filter(max(per_drunk) == per_drunk) %>%
-                    arrange(lon, lat)
-
-ggmap(map)+
-    stat_density_2d(data = drunk_percent, 
-                    aes(x=lon, y= lat, fill = ..level..), 
-                    geom = "polygon", alpha = .3, color = NA) +
-                    scale_fill_gradient2("Fatalities", 
-                         low = "green", mid = "yellow", high = "red", 
-                         midpoint = .0015)
+# drunk_percent <- mutate(valid_location, lon = round(LONGITUD,1), 
+#                         lat = round(LATITUDE,1)) %>%
+#                     group_by(lon, lat, DRUNK_DR) %>%
+#                     summarise(n = n()) %>%
+#                     mutate(per_drunk = DRUNK_DR/n)%>%
+#                     group_by(lon,lat) %>%
+#                     filter(max(per_drunk) == per_drunk) %>%
+#                     arrange(lon, lat)
+# 
+# ggmap(map)+
+#     stat_density_2d(data = drunk_percent, 
+#                     aes(x=lon, y= lat, fill = ..level..), 
+#                     geom = "polygon", alpha = .3, color = NA) +
+#                     scale_fill_gradient2("Fatalities", 
+#                          low = "green", mid = "yellow", high = "red", 
+#                          midpoint = .0015)
 
 
 ```
 
 ## Person data
+
+```{r survived}
+# IN the userguide, death dates is the most clearly labled indicator of non-fatal involvment
+person$SURVIVED <- person$DEATH_MO == 88
+```
+
 
 ```{r person_hist}
 person %>%
@@ -261,6 +267,80 @@ person %>%
 
 ```
 
+
+```{r child_restraints}
+child_restraints <- tibble(id = c(4,10,11,12), 
+                           type = c("Child Restraint Type Unknown",
+                                    "Forward Facing",
+                                    "Rear Facing",
+                                    "Booster Seat"))
+
+child_restraint_used <- person %>%
+                            filter(REST_USE %in% child_restraints$id) %>%
+                            group_by(REST_USE) %>%
+                            summarise(perc_survived = sum(SURVIVED)/n())
+
+child_restraint_used <- inner_join(child_restraint_used, child_restraints, 
+                                    by = c("REST_USE" = "id"))
+
+ggplot(child_restraint_used, aes(x = type, y= perc_survived)) +
+    geom_bar(stat = 'identity')
+
+
+```
+```{r child_seat_pos}
+seat_pos <- tibble(id = c(0, 11, 12, 13, 18, 19, 21, 22, 23, 28, 29, 31, 32,
+                          33, 38, 39, 41, 42, 43, 48, 49, 50, 51, 98, 99),
+                   pos = c("Not a Motor Vehicle Occupant",
+                            "Front Seat – Left Side",
+                            "Front Seat – Middle",
+                            "Front Seat – Right Side",
+                            "Front Seat – Other",
+                            "Front Seat – Unknown",
+                            "Second Seat – Left Side",
+                            "Second Seat – Middle",
+                            "Second Seat – Right Side",
+                            "Second Seat – Other",
+                            "Second Seat – Unknown",
+                            "Third Seat – Left Side",
+                            "Third Seat – Middle",
+                            "Third Seat – Right Side",
+                            "Third Seat – Other",
+                            "Third Seat – Unknown",
+                            "Fourth Seat – Left Side",
+                            "Fourth Seat – Middle",
+                            "Fourth Seat – Right Side",
+                            "Fourth Seat – Other",
+                            "Fourth Seat – Unknown",
+                            "Sleeper Section of Cab",
+                            "Other",
+                            "Not Reported",
+                            "Unknown")
+                    )
+
+child_restraint_used_pos <- person %>%
+                            filter(REST_USE %in% child_restraints$id) 
+# %>%
+#                             group_by(REST_USE, SEAT_POS) %>%
+#                             summarise(count = n())
+                            #summarise(perc_survived = sum(SURVIVED)/n(), count = n())
+                            
+
+child_restraint_used_pos <- left_join(child_restraint_used_pos, seat_pos, by = c("SEAT_POS" ="id")) %>%
+                                left_join(child_restraints, by = c("REST_USE" = "id"))
+
+child_restraint_used_pos$SEAT_ROW <- gsub("(Seat).*", "", child_restraint_used_pos$pos)
+
+ggplot(child_restraint_used_pos, aes(x =type, fill = SEAT_ROW)) +
+    geom_bar() +
+    labs(title= "Child Seat Row by Restraint Type") +
+    coord_flip()
+
+```
+
+```{r}
+names(person)
+```
 
 
 # Ideas to plot
@@ -277,12 +357,17 @@ Age (possible to compair to age distribution of state?)
 Compair types of restraints and injury severity
 Drinking vs. Age
 Drugs vs. age
+Underage drunks
 Drugs by state
 Breakdowns of cycalist info
 Lag time from crash to death
 How offten are they at work
 * Is there something interesting here when combined with time of day?
 LOCATION for where non-motorists were durrint time of crash
+Survival by seat
+Number of people per car
+number of people per accident
+
 
 ```{r count_plots}
 length(list.files("Figs/"))

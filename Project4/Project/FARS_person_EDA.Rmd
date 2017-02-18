@@ -14,11 +14,46 @@ require(tidyverse)
 require(lubridate)
 ```
 
-### FARS Person Data
+## Traffic Fatality Data
 
 ```{r load_data}
 person <- read_csv("FARS2015NationalCSV/person.csv")
 ```
+
+I have decided to explore the 2015 U.S. Department of Transportation Fatality 
+Analysis Reporting System (FARS) report. I think this is an important data set
+to understand because 35,092 people died on public roadways in 2015 (nearly 100
+per day!!) an increase of 7.2% since 2014. DJ Patil and Mark Rosekind of Obama's
+administration issued [a public call to action](https://obamawhitehouse.archives.gov/blog/2016/08/29/2015-traffic-fatalities-data-has-just-been-released-call-action-download-and-analyze) asking citizens to help explore the data. 
+
+I was orignally looking into all of the data but this report was quickly 
+becoming an unmanagable length so I have re-focused on just the person data 
+file. It is my hope that by sheding light on who is involved in these collisions 
+the data can become more personal than just "35,092 people died" which is hard
+to conceptualize. 
+
+### Understanding the data 
+
+From the FARS person data file, we have information on `r nrow(person)` people 
+in `r length(unique(person$ST_CASE))` different colisions that had fatalities
+durring 2015.  We have `r length(person)` features about the people involved in
+these accidents. The in depth details of each field is available in the [FARS
+Analytical User Guide](ftp://ftp.nhtsa.dot.gov/fars/FARS-DOC/Analytical%20User%20Guide/USERGUIDE-2015.pdf)
+on pages 240 - 284, I will breifly touch on all the fields as we explore them 
+though so don't dive into read the documentation yet!
+
+To get a general understanding, here are all the fields:
+
+```{r base_features}
+names(person)
+```
+
+As you may be able to tell, these can be broken down into a few different types
+of catagories info about the crash in general (STATE, DAY, HOUR, ect), info 
+about the vehicle they were in (MAKE, BODY_TYP, etc.), info about the 
+individual's situation in the collision (SEAT_POS, INJ_SEV, EJECTION, DRUGS, 
+etc.), and demographics (AGE, SEX, RACE, etc.).
+
 
 ```{r new_features}
 # In the userguide, death dates is the most clearly labled indicator of
@@ -35,6 +70,103 @@ person$COLLISION_DATETIME <- ymd_hm(paste0(2017, "/",
                                        person$HOUR, "/",
                                        person$MINUTE))
 
+# They provide this in a dreadful format burried in the data manual this 
+# makes it uasable to map codes to states.
+raw_states <- "01 Alabama 30 Montana
+02 Alaska 31 Nebraska
+03 American Samoa 32 Nevada
+04 Arizona 33 New Hampshire
+05 Arkansas 34 New Jersey
+06 California 35 New Mexico
+08 Colorado 36 New York
+09 Connecticut 37 North Carolina
+10 Delaware 38 North Dakota
+11 District of Columbia 39 Ohio
+12 Florida 40 Oklahoma
+13 Georgia 41 Oregon
+14 Guam 42 Pennsylvania
+15 Hawaii 43 Puerto Rico
+16 Idaho 44 Rhode Island
+17 Illinois 45 South Carolina
+18 Indiana 46 South Dakota
+19 Iowa 47 Tennessee
+20 Kansas 48 Texas
+21 Kentucky 49 Utah
+22 Louisiana 50 Vermont
+23 Maine 51 Virginia
+24 Maryland 52 Virgin Islands (Since 2004)
+25 Massachusetts 53 Washington
+26 Michigan 54 West Virginia
+27 Minnesota 55 Wisconsin
+28 Mississippi 56 Wyoming
+29 Missouri"
+
+states <- str_replace(raw_states, ' \\(Since 2004\\)', '') %>%
+            str_split('\\s(?=[0-9])') %>%
+            unlist() %>%
+            str_split_fixed(' ', 2) %>%
+            as_data_frame()
+
+names(states) <- c("st_code", "STATE_NAME")
+states$st_code <- as.numeric(states$st_code)
+
+person <- left_join(person, states, by = c("STATE" = "st_code"))
+
+```
+
+
+
+To get started I have created four new features. SURVIVED is a clear 
+lableing of if the person survived or died in the collision. With our data set
+having `r sum(!person$SURVIVED)` fatalities which matches the 35,092 released 
+by the whitehouse, we can validate our data somewhat. I also added
+COLLISION_DATE and COLLISION_DATETIME fields in more usable date formats in
+case they will be useful later. Finally I created the STATE_NAME column by 
+mapping the state ids that are in the dataset to the coresponding state from 
+the documentation.
+
+There is obviously tons to be explored, so let's dive in!
+
+### General Overview
+
+```{r people_per_crash}
+
+person %>%
+    group_by(ST_CASE) %>%
+    summarise(people_involved = n()) %>%
+    ggplot(aes(x = people_involved)) +
+        geom_histogram(binwidth = 1)
+
+```
+
+It appears that it is most common for there to be two poeople involved in a 
+collision whether is be two people in one vehicle, one in each of two vehicles,
+or one in a vehicle and a pedestrian. As you might expect the more people 
+involved in one collsion, the less rare it is althought there seems to have been
+at least one collison with almost 100 people involved.
+
+
+ST_CASE + VEH_NO for how many vehicles
+
+ST_CASE + VEH_NO + PER_NO for people per vehicle? Not quite right, unsure how so far
+
+```{r}
+
+# Validate why there is any with 0?
+person %>%
+    group_by(ST_CASE) %>%
+    summarise(vehicle_per_collision = max(VEH_NO)) %>%
+    ggplot(aes(x = vehicle_per_collision)) +
+        geom_histogram(binwidth = 1)
+```
+
+
+```{r}
+person %>%
+    group_by(ST_CASE,VEH_NO) %>%
+    summarise(person_per_vehicle = n()) %>%
+    ggplot(aes(x = person_per_vehicle)) +
+        geom_histogram(binwidth = 1)
 ```
 
 
@@ -48,6 +180,10 @@ person %>%
 
 ```
 
+
+
+
+### Drug and Alcohol Use 
 
 ### Child Restraints
 
@@ -150,6 +286,10 @@ LOCATION for where non-motorists were durrint time of crash
 Survival by seat
 Number of people per car
 number of people per accident
+AVG number of people in car depending on age
+
+Can I plot position in the car by making factors for row and left, middle, right and
+adding jitter and alpha to understand where people sit?
 
 
 ```{r count_plots}
