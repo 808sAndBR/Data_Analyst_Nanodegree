@@ -10,8 +10,9 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
 ```
 
 ```{r libraries}
-require(tidyverse)
 require(lubridate)
+require(stringr)
+require(tidyverse)
 ```
 
 ## Traffic Fatality Data
@@ -127,7 +128,7 @@ the documentation.
 
 There is obviously tons to be explored, so let's dive in!
 
-### General Overview
+### Who's involved in these colisions?
 
 ```{r people_per_crash}
 
@@ -145,45 +146,114 @@ or one in a vehicle and a pedestrian. As you might expect the more people
 involved in one collsion, the less rare it is althought there seems to have been
 at least one collison with almost 100 people involved.
 
+```{r veh_per_crash}
 
-ST_CASE + VEH_NO for how many vehicles
-
-ST_CASE + VEH_NO + PER_NO for people per vehicle? Not quite right, unsure how so far
-
-```{r}
-
-# Validate why there is any with 0?
-person %>%
-    group_by(ST_CASE) %>%
-    summarise(vehicle_per_collision = max(VEH_NO)) %>%
+veh_per_crash <- person %>%
+                    group_by(ST_CASE) %>%
+                    summarise(vehicle_per_collision = max(VEH_NO)) 
+veh_per_crash %>%
     ggplot(aes(x = vehicle_per_collision)) +
         geom_histogram(binwidth = 1)
 ```
 
+It seems that single vehicle crashes are most common.
 
-```{r}
+```{r no_vehicles}
+no_vehicle <- filter(veh_per_crash, vehicle_per_collision == 0)[['ST_CASE']]
+
+#View(filter(person, ST_CASE %in% no_vehicle))
+
+```
+ 
+I found it odd that there were any collisons with 0 vehicles but after looking
+at just casses that had no vehicles (Icommented out the View statement but 
+feel free to look yourself)  it looks like they are all missing
+all vehicle information and the PER_TYPE labels them as non-motor vehicle 
+occupants. My working suspicion is that these are pedestrians that were struck
+in a hit and run so the individual was found but the vehicle that struck them
+was not.
+
+```{r ppl_per_veh}
 person %>%
     group_by(ST_CASE,VEH_NO) %>%
-    summarise(person_per_vehicle = n()) %>%
+    summarise(person_per_vehicle = max(PER_NO)) %>%
     ggplot(aes(x = person_per_vehicle)) +
         geom_histogram(binwidth = 1)
 ```
 
-
-
+Finally, it is most common for there to be one person in each vehicle.
 
 ```{r age_hist}
+                
+
+age_hist <- function(people){
+                people %>%
+                filter(AGE < 500) %>%
+                ggplot(aes(x=AGE, fill = !SURVIVED)) +
+                geom_histogram(binwidth = 5) +
+                scale_x_continuous(breaks = seq(0,120,10))
+            }
+
 person %>%
-    filter(AGE < 500) %>%
-    ggplot(aes(x=AGE)) +
-    geom_histogram()
+    age_hist
 
 ```
 
+I'm starting to see why my insurance was so high in my teens and early twenties,
+there are many more people that age involved in collisions than older adults.
+I have also colored the histrogram with the inverse of SURVIVED so the we can
+easily see the distribution of people that passed away in these accidents.
+However this would include passengers, let's focus on drivers.
 
+```{r drivers_age_hist}
+# Saving since will likely use this often 
+drivers <- filter(person, SEAT_POS == 11)
 
+drivers %>%
+    age_hist()
+
+```
+
+This actually flattens the distribution out a good bit which leads me to 
+believe that younger people thend to ride along with others more often than
+older people do.
+
+Speaking of insurance... 
+
+```{r driver_age_sex_hist}
+
+sex_label <- tibble(sex_id = c(1,2),
+                    sex_name = c('Male', 'Female'))
+drivers %>%
+    # There are not enough 8 or 9s to be visable
+    filter(SEX < 3) %>%
+    left_join(sex_label, by = c("SEX" = "sex_id")) %>%
+    age_hist() +
+    facet_grid(sex_name~ .)
+```
+
+I can also see why being male leads to higher premiums! It is shocking 
+how much more often males are drivers in fatal accidents. It looks to be at 
+least twice as common for most ages.
+
+### When do accidents occure?
+
+```{r crashes_by_hour}
+person %>%
+    group_by(ST_CASE, HOUR) %>%
+    filter(HOUR != 99) %>%
+    # There is almost certainly a more clever way to do next 3 lines...
+    summarise(unique_crashes = 1) %>%
+    group_by(HOUR) %>%
+    summarise(crashes = sum(unique_crashes)) %>%
+    ggplot(aes(x = HOUR, crashes)) +
+        geom_line()+
+        ggtitle("Collision per hour")
+```
 
 ### Drug and Alcohol Use 
+
+### People that are working
 
 ### Child Restraints
 
