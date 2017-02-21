@@ -62,10 +62,10 @@ etc.), and demographics (AGE, SEX, RACE, etc.).
 person$SURVIVED <- person$DEATH_MO == 88
 
 # More converniant date format
-person$COLLISION_DATE <- ymd(paste0(2017, "/", person$MONTH, "/", person$DAY))
+person$COLLISION_DATE <- ymd(paste0(2015, "/", person$MONTH, "/", person$DAY))
 
 # More converniant datetime format if hour or min is unknown this is NA
-person$COLLISION_DATETIME <- ymd_hm(paste0(2017, "/", 
+person$COLLISION_DATETIME <- ymd_hm(paste0(2015, "/", 
                                        person$MONTH, "/",
                                        person$DAY, "/",
                                        person$HOUR, "/",
@@ -237,19 +237,96 @@ how much more often males are drivers in fatal accidents. It looks to be at
 least twice as common for most ages.
 
 ### When do accidents occure?
+```{r most_dangerious_days}
+# There is one record per person, this gives one per crash instead
+individual_crashes <- function(people){
+    people %>%
+        select(ST_CASE, MONTH, DAY, HOUR, MINUTE, COLLISION_DATE) %>%
+        distinct()
+}
+
+person %>%
+    individual_crashes() %>%
+    group_by(COLLISION_DATE) %>%
+    summarise(crash_per_day = n()) %>%
+    arrange(desc(crash_per_day)) %>%
+    head(10) %>%
+    mutate(weekday = wday(COLLISION_DATE, TRUE))
+```
+
+Besides all being weekend days, there doesnt seem to be anything special about
+the ten days with the most collisions.
+
+
+```{r crashes_by_month}
+crashes_over_time <- function(people, time_interval, facet_col = NA){    
+                            people %>%
+                            # this needs to be pasted together to work with
+                            # lazy evaluation correctly
+                            filter_(paste0(time_interval , "!=", 99)) %>%
+                            group_by_(time_interval, facet_col) %>%
+                            summarise(crashes = n()) %>%
+                            ggplot(aes_string(x = time_interval, 
+                                              y = "crashes")) +
+                                geom_line()
+                        }
+        
+
+person %>%
+    individual_crashes %>%
+    crashes_over_time('MONTH') +
+    scale_x_continuous(breaks = seq(0,12,2))
+        
+        
+```
+
+I was curious to see if there are more collisions in November/December than 
+other months since there are so many people traveling plus celibration drinks,
+this isnt so strightforward though since different months have different number 
+of days.
+
+```{r avg_crashes_per_day_by_month}
+person %>%
+    individual_crashes %>%
+    group_by(MONTH) %>%
+    summarise(crashes = n()) %>%
+    mutate(crash_per_day = crashes/days_in_month(MONTH)) %>%
+    ggplot(aes(as.factor(MONTH), crash_per_day)) +
+        geom_bar(stat = 'identity') 
+
+```
+
+Interestingly, while this does flatten out the plot it does't seem like the 
+holiday months are especially high as I had expected. It almost looks more like
+in the colder months of the year people might not be out driving as much?
 
 ```{r crashes_by_hour}
 person %>%
-    group_by(ST_CASE, HOUR) %>%
-    filter(HOUR != 99) %>%
-    # There is almost certainly a more clever way to do next 3 lines...
-    summarise(unique_crashes = 1) %>%
-    group_by(HOUR) %>%
-    summarise(crashes = sum(unique_crashes)) %>%
-    ggplot(aes(x = HOUR, crashes)) +
-        geom_line()+
+    individual_crashes %>%
+    crashes_over_time('HOUR') +
+        scale_x_continuous(breaks = seq(0, 24, 4)) +
         ggtitle("Collision per hour")
+
 ```
+
+
+In the early morning hours crashes are at their lowest then they raise while 
+people are commuting to work before dropping back down and then stedily rising 
+throughout the day with the most dangerious time being 6pm while people are 
+driving home from work. 
+
+
+```{r crashes_by_hour_weekday, fig.height= 12}
+person %>%
+    individual_crashes %>%
+    mutate(weekday = wday(COLLISION_DATE, TRUE)) %>%
+    crashes_over_time('HOUR', 'weekday') +
+    facet_grid(weekday ~ .)
+```
+
+By looking at the hours crashes occur by hour by day, it is very obvious that 
+there are a lot of crashes on late on Fridays and Saturdays and early on 
+Saturdays and Sundays.
 
 ### Drug and Alcohol Use 
 
