@@ -257,6 +257,21 @@ person %>%
 Besides all being weekend days, there doesnt seem to be anything special about
 the ten days with the most collisions.
 
+```{r avg_crash_per_weekday}
+person %>%
+    individual_crashes() %>%
+    mutate(weekday = wday(COLLISION_DATE, TRUE)) %>%
+    group_by(COLLISION_DATE, weekday) %>%
+    summarise(daily_crashes = n()) %>%
+    group_by(weekday) %>%
+    summarise(avg_weekday_crashes = sum(daily_crashes)/n()) %>%
+    ggplot(aes(x = weekday, y = avg_weekday_crashes)) +
+        geom_bar(stat='identity')
+        
+```
+
+Along the same lines, Saturadays and Sundays seem to have the most collisions
+followed by Fridays.
 
 ```{r crashes_by_month}
 crashes_over_time <- function(people, time_interval, facet_col = NA){    
@@ -328,9 +343,87 @@ By looking at the hours crashes occur by hour by day, it is very obvious that
 there are a lot of crashes on late on Fridays and Saturdays and early on 
 Saturdays and Sundays.
 
+```{r working_crashes_by_hour_weekday, fig.height= 12}
+person %>%
+    filter(WORK_INJ == 1) %>%
+    individual_crashes %>%
+    mutate(weekday = wday(COLLISION_DATE, TRUE)) %>%
+    crashes_over_time('HOUR', 'weekday') +
+    facet_grid(weekday ~ .)
+```
+
+WORK_INJ only shows when the person's death certificate says that they were 
+"at work" at the time of the crash. As you may expect, there seem to be the most
+incedents where people are working durring the day on weekdays.
+
 ### Drug and Alcohol Use 
 
-### People that are working
+```{r}
+
+tibble(
+    persons_state = c('drunk_driver', 'sober_driver', 'drunk_passenger', 'sober_passenger'),
+    count = with(person, c(sum(DRINKING == 1 & SEAT_POS == 11),
+            sum(DRINKING == 0 & SEAT_POS == 11),
+            sum(DRINKING == 1 & SEAT_POS != 11),
+            sum(DRINKING == 0 & SEAT_POS != 11)))
+) %>%
+    ggplot(aes(x = persons_state, y = count)) +
+    geom_bar(stat = 'identity')
+    
+```
+
+I found it odd that there were so many drunk and sober passengers
+but it has occured to me that perhaps police officers on the scene of a fatal 
+accident have better things to do than check if passengers have been drinking.
+
+```{r perc_alc_reported}
+perc_alc_reported <- filter(person, SEAT_POS != 11) %>%
+                        summarize(perc_alc_reported = sum((DRINKING <= 1)) / n()) %>%
+                        round(4) * 100
+
+```
+
+This seems somewhat confirmed by only `r perc_alc_reported`% of passengers 
+having either alcohol involved or alcohol not involved reported for them. 
+
+```{r drunk_v_not_by_hour}
+person %>%
+    filter(SEAT_POS == 11, DRINKING <= 1, HOUR < 25) %>%
+    group_by(HOUR, DRINKING) %>%
+    summarise(count = n()) %>%
+    ggplot(aes(x = HOUR, y = count, color = factor(DRINKING))) +
+    geom_line()
+
+```
+
+I suppose it makes sense for there to be less drunk driving incidents in the 
+middle of the day than in the evenings, but I am a bit surprised by how 
+strongly accidents where driver drinking was a factor ran inversely to those
+where it wasn't.
+
+```{r drunk_v_not_by_hour_by_day}
+person %>%
+    filter(SEAT_POS == 11, DRINKING <= 1, HOUR < 25) %>%
+    mutate(weekday = wday(COLLISION_DATE, TRUE)) %>%
+    group_by(HOUR, weekday, DRINKING) %>%
+    summarise(count = n()) %>%
+    ggplot(aes(x = HOUR, y = count, color = factor(DRINKING))) +
+    geom_line() +
+    facet_grid(weekday~.)
+
+
+```
+
+By looking at it per day, you get basically what you would expect with there 
+being a slight increase in drunk driver crashes areound dinner and happy hour 
+time throughout the week, but with the big spikes in drunk driving being on the
+weekend late night/early mornings. 
+
+Another thing I hadn't caught in the earlier plots of time per weekday is that
+you can basically see people sleeping in on the weekend morning compaired to 
+weekdays.
+
+
 
 ### Child Restraints
 
@@ -438,6 +531,7 @@ AVG number of people in car depending on age
 Can I plot position in the car by making factors for row and left, middle, right and
 adding jitter and alpha to understand where people sit?
 
+color for survived vs no plot lag time
 
 ```{r count_plots}
 length(list.files("Figs/"))
