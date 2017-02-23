@@ -467,6 +467,13 @@ ggplot(child_restraint_used, aes(x = type, y= perc_survived)) +
 
 
 ```
+It's a relief to see that children seats do seem to keep children somewhat 
+safe, compaired the the `r round(sum(person$SURVIVED)/nrow(person) * 100, 2)`%
+survival rate for everyone that is involved in crashes that have a fatality.
+Althought with the amount of collisions that only have one person in each 
+vehicle this comparison can't really be made so directly.
+
+
 ```{r child_seat_pos}
 seat_pos <- tibble(id = c(0, 11, 12, 13, 18, 19, 21, 22, 23, 28, 29, 31, 32,
                           33, 38, 39, 41, 42, 43, 48, 49, 50, 51, 98, 99),
@@ -514,10 +521,114 @@ ggplot(child_restraint_used_pos, aes(x =SEAT_ROW, fill = type)) +
 
 ```
 
+On the bright side, it appers that most peopel are avoiding putting child seats
+in the front rows of vehicles!
+
+```{r under_10_retraints}
+all_restraints <- tibble(
+        id = c(00, 02, 01, 03, 04, 05, 07, 08, 10, 11, 12, 16, 17, 19),
+        restraint = c('Not Applicable',
+                    'Shoulder Belt Only Used',
+                    'Lap Belt Only Used',
+                    'Lap and Shoulder Belt Used',
+                    'Child Restraint Type Unknown ',
+                    'DOT-Compliant Motorcycle Helmet ',
+                    'None Used',
+                    'Restraint Used – Type Unknown',
+                    'Child Restraint System – Forward Facing',
+                    'Child Restraint System – Rear Facing ',
+                    'Booster Seat',
+                    'Helmet, Other than DOT-Compliant Motorcycle Helmet',
+                    'No Helmet',
+                    'Helmet, Unknown if DOT-Compliant')
+)
+
+under_10 <- person %>%
+    # REST_USE 96 is "Not a Motor Vehicle Occupant"
+    filter(AGE <= 10, !(REST_USE %in% c(00,96,98,99,97))) %>%
+    mutate(child_restraint_used = REST_USE %in% child_restraints$id) %>%
+    left_join(all_restraints,  by = c("REST_USE" = "id"))
+
+under_10 %>%
+    group_by(restraint) %>%
+    summarise(count = n()) %>%
+    ggplot(aes(x = restraint, y = count)) + 
+    geom_bar(stat = 'identity') +
+    coord_flip()
+    
+```
+
+I'm honestly shocked by how many kids under 10 are in cars with just a seatbelt
+or even more terrifyingly with no restraint at all.
+
+```{r under_10_no_restraint_by_age}
+
+under_10 %>%
+    mutate(not_ch_rest = !(REST_USE %in% child_restraints$id)) %>%
+    group_by(AGE) %>%
+    summarise(perc_by_age = sum(not_ch_rest)/n()) %>%
+    ggplot(aes(x = AGE, y = perc_by_age)) +
+    geom_line() +
+    scale_y_continuous(breaks = seq(0,1,.1))
+    
+```
+
+While most of my Googling has suggested that children should be in a booster
+seat until they are 8-10 years old it looks like it's actually rare for
+people to use child restraints that long.
+
+```{r survival_rates_under_10_restraints}
+under_10 %>%
+    mutate(ch_res_used = REST_USE %in% child_restraints$id) %>%
+    group_by(AGE, ch_res_used, SURVIVED) %>%
+    summarize(count = n()) %>%
+    mutate(perc_survived = count/sum(count)) %>%
+    filter(SURVIVED == TRUE) %>%
+    ggplot(aes(x=AGE, y = perc_survived, color = ch_res_used)) +
+    geom_point()
+
+```
+
+With a higher percent of children surviving at every age if they were in a 
+child restraint, it seems like we cant stress enough how important they are!
+
+In an atempt not to sensationalize the 100% of 10 year olds in child restraints 
+surviving, it should be noted that there were only
+`r nrow(filter(under_10, REST_USE %in% child_restraints$id, AGE == 10))` of
+them while there were
+`r nrow(filter(under_10, !(REST_USE %in% child_restraints$id), AGE == 10))`
+not in restraints. 
+
+### Lag time
+
+```{r lag_time}
+person %>%
+    filter(LAG_HRS < 900, AGE < 900, DOA == FALSE) %>%
+    ggplot(aes(AGE, (LAG_HRS*60) + LAG_MINS)) +
+        geom_point(alpha = .2) +
+        geom_smooth(method='lm')
+    
+```
+
+I originally thought that lag time was how long it took for an individual to 
+get to the hospital. Unfortunatly this field is a bit darker, since it actually
+is how long the person survived from the crash until they eventually passed 
+away.
+
+I thought it was interesting that the older one is, the longer they may 
+survive before passing away. However there are tons of confounding factors with 
+this for instance someone who is younger may be in a similar physical situation
+to someone older but the younger person may recover, which would mean they do
+not have a lag time. So I don't think we can draw anything too interesting 
+from this.
+
 ```{r}
 names(person)
 ```
 
+## Final Plots and Summary
+
+## Reflection
 
 # Ideas to plot
 
