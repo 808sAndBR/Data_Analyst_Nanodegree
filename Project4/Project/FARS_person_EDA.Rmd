@@ -27,20 +27,20 @@ to understand because 35,092 people died on public roadways in 2015 (nearly 100
 per day!!) an increase of 7.2% since 2014. DJ Patil and Mark Rosekind of Obama's
 administration issued [a public call to action](https://obamawhitehouse.archives.gov/blog/2016/08/29/2015-traffic-fatalities-data-has-just-been-released-call-action-download-and-analyze) asking citizens to help explore the data. 
 
-I was orignally looking into all of the data but this report was quickly 
-becoming an unmanagable length so I have re-focused on just the person data 
-file. It is my hope that by sheding light on who is involved in these collisions 
+I was originally looking into all of the data but this report was quickly 
+becoming an unmanageable length so I have re-focused on just the person data 
+file. It is my hope that by shedding light on who is involved in these collisions 
 the data can become more personal than just "35,092 people died" which is hard
 to conceptualize. 
 
 ### Understanding the data 
 
 From the FARS person data file, we have information on `r nrow(person)` people 
-in `r length(unique(person$ST_CASE))` different colisions that had fatalities
-durring 2015.  We have `r length(person)` features about the people involved in
+in `r length(unique(person$ST_CASE))` different collisions that had fatalities
+during 2015.  We have `r length(person)` features about the people involved in
 these accidents. The in depth details of each field is available in the [FARS
 Analytical User Guide](ftp://ftp.nhtsa.dot.gov/fars/FARS-DOC/Analytical%20User%20Guide/USERGUIDE-2015.pdf)
-on pages 240 - 284, I will breifly touch on all the fields as we explore them 
+on pages 240 - 284, I will briefly touch on all the fields as we explore them 
 though so don't dive into read the documentation yet!
 
 To get a general understanding, here are all the fields:
@@ -50,7 +50,7 @@ names(person)
 ```
 
 As you may be able to tell, these can be broken down into a few different types
-of catagories info about the crash in general (STATE, DAY, HOUR, ect), info 
+of categories info about the crash in general (STATE, DAY, HOUR, etc), info 
 about the vehicle they were in (MAKE, BODY_TYP, etc.), info about the 
 individual's situation in the collision (SEAT_POS, INJ_SEV, EJECTION, DRUGS, 
 etc.), and demographics (AGE, SEX, RACE, etc.).
@@ -118,12 +118,12 @@ person <- left_join(person, states, by = c("STATE" = "st_code"))
 
 
 To get started I have created four new features. SURVIVED is a clear 
-lableing of if the person survived or died in the collision. With our data set
+labeling of if the person survived or died in the collision. With our data set
 having `r sum(!person$SURVIVED)` fatalities which matches the 35,092 released 
-by the whitehouse, we can validate our data somewhat. I also added
+by the white house, we can validate our data somewhat. I also added
 COLLISION_DATE and COLLISION_DATETIME fields in more usable date formats in
 case they will be useful later. Finally I created the STATE_NAME column by 
-mapping the state ids that are in the dataset to the coresponding state from 
+mapping the state ids that are in the dataset to the corresponding state from 
 the documentation.
 
 There is obviously tons to be explored, so let's dive in!
@@ -140,11 +140,11 @@ person %>%
 
 ```
 
-It appears that it is most common for there to be two poeople involved in a 
+It appears that it is most common for there to be two people involved in a 
 collision whether is be two people in one vehicle, one in each of two vehicles,
 or one in a vehicle and a pedestrian. As you might expect the more people 
-involved in one collsion, the less rare it is althought there seems to have been
-at least one collison with almost 100 people involved.
+involved in one collision, the less rare it is although there seems to have been
+at least one collision with almost 100 people involved.
 
 ```{r veh_per_crash}
 
@@ -165,8 +165,8 @@ no_vehicle <- filter(veh_per_crash, vehicle_per_collision == 0)[['ST_CASE']]
 
 ```
  
-I found it odd that there were any collisons with 0 vehicles but after looking
-at just casses that had no vehicles (Icommented out the View statement but 
+I found it odd that there were any collisions with 0 vehicles but after looking
+at just cases that had no vehicles (I commented out the View statement but 
 feel free to look yourself)  it looks like they are all missing
 all vehicle information and the PER_TYPE labels them as non-motor vehicle 
 occupants. My working suspicion is that these are pedestrians that were struck
@@ -201,7 +201,7 @@ person %>%
 
 I'm starting to see why my insurance was so high in my teens and early twenties,
 there are many more people that age involved in collisions than older adults.
-I have also colored the histrogram with the inverse of SURVIVED so the we can
+I have also colored the histogram with the inverse of SURVIVED so the we can
 easily see the distribution of people that passed away in these accidents.
 However this would include passengers, let's focus on drivers.
 
@@ -215,7 +215,7 @@ drivers %>%
 ```
 
 This actually flattens the distribution out a good bit which leads me to 
-believe that younger people thend to ride along with others more often than
+believe that younger people tend to ride along with others more often than
 older people do.
 
 Speaking of insurance... 
@@ -254,7 +254,7 @@ person %>%
     mutate(weekday = wday(COLLISION_DATE, TRUE))
 ```
 
-Besides all being weekend days, there doesnt seem to be anything special about
+Besides all being weekend days, there doesn't seem to be anything special about
 the ten days with the most collisions.
 
 ```{r avg_crash_per_weekday}
@@ -270,7 +270,7 @@ person %>%
         
 ```
 
-Along the same lines, Saturadays and Sundays seem to have the most collisions
+Along the same lines, Saturdays and Sundays seem to have the most collisions
 followed by Fridays.
 
 ```{r crashes_by_month}
@@ -296,8 +296,8 @@ person %>%
 ```
 
 I was curious to see if there are more collisions in November/December than 
-other months since there are so many people traveling plus celibration drinks,
-this isnt so strightforward though since different months have different number 
+other months since there are so many people traveling plus celebration drinks,
+this isn't so straightforward though since different months have different number 
 of days.
 
 ```{r avg_crashes_per_day_by_month}
@@ -311,7 +311,7 @@ person %>%
 
 ```
 
-Interestingly, while this does flatten out the plot it does't seem like the 
+Interestingly, while this does flatten out the plot it doesn't seem like the 
 holiday months are especially high as I had expected. It almost looks more like
 in the colder months of the year people might not be out driving as much?
 
@@ -326,8 +326,8 @@ person %>%
 
 
 In the early morning hours crashes are at their lowest then they raise while 
-people are commuting to work before dropping back down and then stedily rising 
-throughout the day with the most dangerious time being 6pm while people are 
+people are commuting to work before dropping back down and then steadily rising 
+throughout the day with the most dangerous time being 6pm while people are 
 driving home from work. 
 
 
@@ -354,7 +354,7 @@ person %>%
 
 WORK_INJ only shows when the person's death certificate says that they were 
 "at work" at the time of the crash. As you may expect, there seem to be the most
-incedents where people are working durring the day on weekdays.
+incidents where people are working during the day on weekdays.
 
 ### Drug and Alcohol Use 
 
@@ -373,7 +373,7 @@ tibble(
 ```
 
 I found it odd that there were so many drunk and sober passengers
-but it has occured to me that perhaps police officers on the scene of a fatal 
+but it has occurred to me that perhaps police officers on the scene of a fatal 
 accident have better things to do than check if passengers have been drinking.
 
 ```{r perc_alc_reported}
@@ -415,12 +415,12 @@ person %>%
 ```
 
 By looking at it per day, you get basically what you would expect with there 
-being a slight increase in drunk driver crashes areound dinner and happy hour 
+being a slight increase in drunk driver crashes around dinner and happy hour 
 time throughout the week, but with the big spikes in drunk driving being on the
 weekend late night/early mornings. 
 
-Another thing I hadnt caught in the earlier plots of time per weekday is that
-you can basically see people sleeping in on the weekend morning compaired to 
+Another thing I hadn't caught in the earlier plots of time per weekday is that
+you can basically see people sleeping in on the weekend morning compared to 
 weekdays.
 
 ```{r}
@@ -441,8 +441,8 @@ person %>%
 
 This is a really interesting one to unpack. I am pretty surprised to see how 
 often there are more drugs and drinking than people only using drugs. It's also
-interesting to me that while durring the day all substance abuse collisions are
-a lot lower, almost no one is doing drungs and drinking mid-weekday (althought 
+interesting to me that while during the day all substance abuse collisions are
+a lot lower, almost no one is doing drugs and drinking mid-weekday (although 
 there are still accidents with one or the other).
 
 ### Child Restraints
@@ -468,9 +468,9 @@ ggplot(child_restraint_used, aes(x = type, y= perc_survived)) +
 
 ```
 It's a relief to see that children seats do seem to keep children somewhat 
-safe, compaired the the `r round(sum(person$SURVIVED)/nrow(person) * 100, 2)`%
+safe, compared the the `r round(sum(person$SURVIVED)/nrow(person) * 100, 2)`%
 survival rate for everyone that is involved in crashes that have a fatality.
-Althought with the amount of collisions that only have one person in each 
+Although with the amount of collisions that only have one person in each 
 vehicle this comparison can't really be made so directly.
 
 
@@ -521,7 +521,7 @@ ggplot(child_restraint_used_pos, aes(x =SEAT_ROW, fill = type)) +
 
 ```
 
-On the bright side, it appers that most peopel are avoiding putting child seats
+On the bright side, it appears that most people are avoiding putting child seats
 in the front rows of vehicles!
 
 ```{r under_10_retraints}
@@ -558,7 +558,7 @@ under_10 %>%
     
 ```
 
-I'm honestly shocked by how many kids under 10 are in cars with just a seatbelt
+I'm honestly shocked by how many kids under 10 are in cars with just a seat belt
 or even more terrifyingly with no restraint at all.
 
 ```{r under_10_no_restraint_by_age}
@@ -573,7 +573,7 @@ under_10 %>%
     
 ```
 
-While most of my Googling has suggested that children should be in a booster
+While most of my Googleing has suggested that children should be in a booster
 seat until they are 8-10 years old it looks like it's actually rare for
 people to use child restraints that long.
 
@@ -592,7 +592,7 @@ under_10 %>%
 With a higher percent of children surviving at every age if they were in a 
 child restraint, it seems like we cant stress enough how important they are!
 
-In an atempt not to sensationalize the 100% of 10 year olds in child restraints 
+In an attempt not to sensationalize the 100% of 10 year olds in child restraints 
 surviving, it should be noted that there were only
 `r nrow(filter(under_10, REST_USE %in% child_restraints$id, AGE == 10))` of
 them while there were
@@ -611,7 +611,7 @@ person %>%
 ```
 
 I originally thought that lag time was how long it took for an individual to 
-get to the hospital. Unfortunatly this field is a bit darker, since it actually
+get to the hospital. Unfortunately this field is a bit darker, since it actually
 is how long the person survived from the crash until they eventually passed 
 away.
 
@@ -636,21 +636,21 @@ Maps
 
 * Heat map (will just be population map probably) 
 * Drunk driving incidents in state / tot in state 
-* Drunk driving % by month (does it peak arround holidays?)
-* Most dangerious driving days of the year
+* Drunk driving % by month (does it peak around holidays?)
+* Most dangerous driving days of the year
 
 Person Data:
-Age (possible to compair to age distribution of state?)
-Compair types of restraints and injury severity
+Age (possible to compare to age distribution of state?)
+Compare types of restraints and injury severity
 Drinking vs. Age
 Drugs vs. age
 Underage drunks
 Drugs by state
-Breakdowns of cycalist info
+Breakdowns of cyclist info
 Lag time from crash to death
-How offten are they at work
+How often are they at work
 * Is there something interesting here when combined with time of day?
-LOCATION for where non-motorists were durrint time of crash
+LOCATION for where non-motorists were during time of crash
 Survival by seat
 Number of people per car
 number of people per accident
