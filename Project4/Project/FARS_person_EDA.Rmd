@@ -419,11 +419,31 @@ being a slight increase in drunk driver crashes areound dinner and happy hour
 time throughout the week, but with the big spikes in drunk driving being on the
 weekend late night/early mornings. 
 
-Another thing I hadn't caught in the earlier plots of time per weekday is that
+Another thing I hadnt caught in the earlier plots of time per weekday is that
 you can basically see people sleeping in on the weekend morning compaired to 
 weekdays.
 
+```{r}
 
+person %>%
+    filter(DRINKING == 1 | DRUGS == 1, HOUR < 25) %>%
+    mutate(impairment = if_else(DRUGS == 1 & DRINKING == 1,
+                                "Drugs and Dinking", 
+                                if_else(DRUGS == 1, 'Drugs', 'Drinking')),
+           weekday = wday(COLLISION_DATE, TRUE)) %>%
+    group_by(HOUR, weekday, impairment) %>%
+    summarise(count = n()) %>%
+    ggplot(aes(x = HOUR, y = count, color = factor(impairment))) +
+    geom_line() +
+    facet_grid(weekday~.)
+
+```
+
+This is a really interesting one to unpack. I am pretty surprised to see how 
+often there are more drugs and drinking than people only using drugs. It's also
+interesting to me that while durring the day all substance abuse collisions are
+a lot lower, almost no one is doing drungs and drinking mid-weekday (althought 
+there are still accidents with one or the other).
 
 ### Child Restraints
 
@@ -479,18 +499,15 @@ seat_pos <- tibble(id = c(0, 11, 12, 13, 18, 19, 21, 22, 23, 28, 29, 31, 32,
 
 child_restraint_used_pos <- person %>%
                             filter(REST_USE %in% child_restraints$id) 
-# %>%
-#                             group_by(REST_USE, SEAT_POS) %>%
-#                             summarise(count = n())
-                            #summarise(perc_survived = sum(SURVIVED)/n(), count = n())
-                            
 
-child_restraint_used_pos <- left_join(child_restraint_used_pos, seat_pos, by = c("SEAT_POS" ="id")) %>%
+# Rows are not reported directly so we need to join with seat positions and use regex to get row
+child_restraint_used_pos <- left_join(child_restraint_used_pos, seat_pos,
+                                      by = c("SEAT_POS" ="id")) %>%
                                 left_join(child_restraints, by = c("REST_USE" = "id"))
 
 child_restraint_used_pos$SEAT_ROW <- gsub("(Seat).*", "", child_restraint_used_pos$pos)
 
-ggplot(child_restraint_used_pos, aes(x =type, fill = SEAT_ROW)) +
+ggplot(child_restraint_used_pos, aes(x =SEAT_ROW, fill = type)) +
     geom_bar() +
     labs(title= "Child Seat Row by Restraint Type") +
     coord_flip()
