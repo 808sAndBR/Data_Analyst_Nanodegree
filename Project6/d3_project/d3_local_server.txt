@@ -1,0 +1,16 @@
+Terminal with Python
+
+If you’re using Mac OS X or Linux, then you already have Python installed. As long as you’re comfortable entering commands in the terminal, then running a miniserver with Python is definitely the quickest option. (If you’re on Windows, you’ll need to install Python first.)
+
+To use Python, you’ll need to open up a terminal window on your system. On a Mac, open the Terminal application. You can find it in the Utilities folder, or by typing Terminal into Spotlight (the magnifying glass menu item in the upper-right corner of your screen). Linux users are born knowing how to open a terminal window, so I won’t waste your time explaining it here.
+
+To run a Python web server:
+
+Open up a new terminal window.
+Via the command line, navigate into the directory that you want served. For example, if your project folder is in your Desktop folder on your Mac, you could type: cd ~/Desktop/project-folder.
+Enter python -m SimpleHTTPServer 8888 &.
+(This will work with Python version 2.x, but in Python versions 3.0 and newer, SimpleHTTPServer has been removed. For Python 3.x, just replace SimpleHTTPServer with http.server in the command.)
+
+This will activate the server on port 8888. Switch back to your web browser and visit the following URL: http://localhost:8888/. Yes, instead of www.something.com, you just use localhost, which tells the browser to request a page from this machine.
+
+You should see the blank “D3 Page Template” page. Given that body of the page is empty, it won’t look like much. Select View source, and you should see the contents of our HTML template page.
