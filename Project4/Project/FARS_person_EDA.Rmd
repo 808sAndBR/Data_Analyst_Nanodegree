@@ -356,6 +356,23 @@ WORK_INJ only shows when the person's death certificate says that they were
 "at work" at the time of the crash. As you may expect, there seem to be the most
 incidents where people are working during the day on weekdays.
 
+```{r seat_possition}
+person <- left_join(person, seat_pos, by = c("SEAT_POS" ="id"))
+
+person$SEAT_SIDE <- gsub(".*(Seat)", "", person$pos) %>%
+                        gsub(" – ",'', .)
+
+person$SEAT_ROW <- gsub("( Seat).*", "", person$pos)
+
+person %>%
+    filter(SEAT_SIDE %in% c("Left Side", "Right Side", "Middle"),
+           SEAT_ROW %in% c("Front", "Second", "Third")) %>%
+    ggplot(aes(x = SURVIVED)) +
+        geom_bar() +
+        facet_grid(SEAT_ROW ~ SEAT_SIDE)
+```
+
+
 ### Drug and Alcohol Use 
 
 ```{r}
@@ -423,7 +440,7 @@ Another thing I hadn't caught in the earlier plots of time per weekday is that
 you can basically see people sleeping in on the weekend morning compared to 
 weekdays.
 
-```{r}
+```{r imparment_by_day}
 
 person %>%
     filter(DRINKING == 1 | DRUGS == 1, HOUR < 25) %>%
@@ -504,19 +521,18 @@ seat_pos <- tibble(id = c(0, 11, 12, 13, 18, 19, 21, 22, 23, 28, 29, 31, 32,
                             "Unknown")
                     )
 
-child_restraint_used_pos <- person %>%
-                            filter(REST_USE %in% child_restraints$id) 
+child_restraint_pos <- person %>%
+                        filter(REST_USE %in% child_restraints$id) 
 
 # Rows are not reported directly so we need to join with seat positions and use regex to get row
-child_restraint_used_pos <- left_join(child_restraint_used_pos, seat_pos,
+child_restraint_pos <- left_join(child_restraint_pos, seat_pos,
                                       by = c("SEAT_POS" ="id")) %>%
                                 left_join(child_restraints, by = c("REST_USE" = "id"))
 
-child_restraint_used_pos$SEAT_ROW <- gsub("(Seat).*", "", child_restraint_used_pos$pos)
+child_restraint_pos$SEAT_ROW <- gsub("(Seat).*", "", child_restraint_pos$pos)
 
-ggplot(child_restraint_used_pos, aes(x =SEAT_ROW, fill = type)) +
+ggplot(child_restraint_pos, aes(x =SEAT_ROW, fill = type)) +
     geom_bar() +
-    labs(title= "Child Seat Row by Restraint Type") +
     coord_flip()
 
 ```
@@ -558,8 +574,8 @@ under_10 %>%
     
 ```
 
-I'm honestly shocked by how many kids under 10 are in cars with just a seat belt
-or even more terrifyingly with no restraint at all.
+I'm shocked by how many kids under 10 are in cars with just a seat belt
+or more terrifyingly with no restraint at all.
 
 ```{r under_10_no_restraint_by_age}
 
@@ -619,14 +635,78 @@ I thought it was interesting that the older one is, the longer they may
 survive before passing away. However there are tons of confounding factors with 
 this for instance someone who is younger may be in a similar physical situation
 to someone older but the younger person may recover, which would mean they do
-not have a lag time. So I don't think we can draw anything too interesting 
-from this.
+not have a lag time. So I don't think we can really draw any conclusions from 
+this.
 
 ```{r}
 names(person)
 ```
 
 ## Final Plots and Summary
+```{r final_imparment_by_day}
+person %>%
+    filter(DRINKING == 1 | DRUGS == 1, HOUR < 25) %>%
+    mutate(impairment = if_else(DRUGS == 1 & DRINKING == 1,
+                                "Drugs and Dinking", 
+                                if_else(DRUGS == 1, 'Drugs', 'Drinking')),
+           weekday = wday(COLLISION_DATE, TRUE)) %>%
+    group_by(HOUR, weekday, impairment) %>%
+    summarise(count = n()) %>%
+    ggplot(aes(x = HOUR, y = count, color = factor(impairment))) +
+        geom_line() +
+        facet_grid(weekday~.) +
+        labs(title ="Hourly Drinking/Drung use in Fatal Accients by Day",
+             y = "Fatal Accidents") +
+        scale_color_discrete(name = "Impairment:") +
+        theme(legend.position = "top")
+
+```
+
+```{r}
+
+child_restraint_pos$SEAT_ROW <- factor(child_restraint_pos$SEAT_ROW, 
+                                       levels = c("Front", "Second", "Third",
+                                                  "Fourth", "Other",
+                                                  "Not Reported", "Unknown" ))
+
+child_restraint_pos %>%
+    ggplot(aes(x =SEAT_ROW, fill = type)) +
+        geom_bar() +
+        labs(title = "Child Seat Row by Restraint Type",
+             x = "Seat Row") +
+        coord_flip() +
+        scale_x_discrete(
+            limits = rev(levels(child_restraint_pos$SEAT_ROW)))
+        
+        
+```
+
+
+```{r final_seat_pos}
+
+person %>%
+    filter(SEAT_SIDE %in% c("Left Side", "Right Side", "Middle"),
+           SEAT_ROW %in% c("Front", "Second", "Third")) %>%
+    group_by(SEAT_SIDE, SEAT_ROW, SURVIVED) %>%
+    summarise(n = n()) %>%
+    mutate(perc = (n / sum(n)) * 100) %>%
+    ggplot(aes(x = SURVIVED, y = perc)) +
+        geom_bar(stat = "identity") +
+        facet_grid(SEAT_ROW ~ SEAT_SIDE) +
+        labs(title = "Percents Survival by Seat in Vehicle",
+             y = "Percent", 
+             x = "Survived") +
+        theme(panel.grid.major.y = element_line(colour = "lightgrey",
+                                                linetype = 3),
+              panel.border = element_blank(),
+              panel.spacing = unit(0,"mm"),
+              panel.background = element_blank(),
+              strip.background = element_blank(),
+              strip.text = element_text(size = 12),
+              strip.text.y = element_text(angle = 0)
+        )
+```
+
 
 ## Reflection
 
