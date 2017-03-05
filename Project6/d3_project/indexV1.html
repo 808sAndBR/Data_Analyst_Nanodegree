@@ -7,36 +7,19 @@
     </head>
     <body>
         <div class = "container"> 
-            <input type="checkbox" id="under1000"> Only buildings with less than 1,000 units
+            hi <br>
             <div class = "pipeline-size-distribution">
 
             </div>
 
         <script type="text/javascript">
             var dataset;
-            
+
             d3.csv("all_quarters_merged.csv", function(data) {
                 // Should the blank ones be filtered out?
-                // How should I show the really large ones?
-                dataset = data.filter(function(d) {return d.zoning_generalized != ''});
+                dataset = data.filter(function(d) {return d.zoning_generalized != ''})
+                                .filter(function(d) {return d.units < 1000});
 
-            d3.select("#under1000").on("change",update);
-            update();
-            
-            function update(){
-                if(d3.select("#under1000").property("checked")){
-                    dataset = dataset.filter(function(d) {return d.units < 1000});
-                    console.log('test')
-                } else {
-                    dataset = dataset;         
-                }
-                // I need a way to redraw the plot here but am not getting it becasue it
-                // is wraped in the csv read currently... I think? 
-                drawPlot()
-            }
-
-            // bahahahah ok this plan makes it replot it a ton of times
-            function drawPlot(){
             var margin = {top: 20, right: 10, bottom: 20, left: 130};
             
             var width = 960 - margin.left - margin.right;
@@ -105,8 +88,6 @@
             svg.append("g")
                 .attr("class", "axis")
                 .call(yAxis);
-
-            }
             });
 
 //d3.set(dataset,function(d){return d["zoning_generalized"]}).values()
