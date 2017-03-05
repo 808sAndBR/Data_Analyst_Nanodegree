@@ -13,8 +13,81 @@
             </div>
 
         <script type="text/javascript">
-            // Your beautiful D3 code will go here
-            d3.select(".pipeline-size-distribution").append("p").text("New!");
+            var dataset;
+
+            d3.csv("all_quarters_merged.csv", function(data) {
+                dataset = data;
+            
+            var margin = {top: 20, right: 10, bottom: 20, left: 130};
+            
+            var width = 960 - margin.left - margin.right;
+            var height = 500 - margin.top - margin.bottom;
+
+            var zoning = d3.set(dataset, function(d){
+                                return d["zoning_generalized"]
+                            }).values()
+
+            var unit_range = d3.extent(dataset, function(d){
+                                            return +d.units
+                                        })
+
+            var x_scale = d3.scaleLinear()
+                            .domain(unit_range)
+                            .range([0, width])
+
+
+            var y_range = d3.range(0, height, height/zoning.length)
+
+            var y_scale = d3.scaleOrdinal()
+                            .domain(zoning)
+                            .range(y_range)
+
+            var svg = d3.select(".pipeline-size-distribution")
+                        .append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        // is this part needed?
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");;
+
+            svg.selectAll("rect")
+                .data(dataset)
+                .enter()
+                .append("rect")
+                .attr("x", function(d) {
+                    return x_scale(d["units"]);
+                })
+                .attr("y", function(d){
+                    return y_scale(d["zoning_generalized"]);
+                })
+                .attr("width", 3)
+                .attr("height", 14);
+
+            var xAxis = d3.axisBottom()
+                            .scale(x_scale);
+
+            var yAxis = d3.axisLeft()
+                            .scale(y_scale)
+
+            svg.append("g")
+                .attr("transform", "translate(0," + (height - 20) + ")")
+                .call(xAxis)
+                .selectAll("text")
+    .attr("y", 6)
+    .attr("x", 6)
+    .style("text-anchor", "start");
+
+            svg.append("g")
+                .attr("class", "axis")
+                .call(yAxis);
+            });
+
+//d3.set(dataset,function(d){return d["zoning_generalized"]}).values()
+
+// can get to unit numbers this way
+// dataset.forEach(function(d){
+//     console.log(d.UNITS)})
+
         </script>
     </body>
 </html>
