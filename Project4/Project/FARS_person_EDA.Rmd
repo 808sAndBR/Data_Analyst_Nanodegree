@@ -143,8 +143,8 @@ person %>%
 It appears that it is most common for there to be two people involved in a 
 collision whether is be two people in one vehicle, one in each of two vehicles,
 or one in a vehicle and a pedestrian. As you might expect the more people 
-involved in one collision, the less rare it is although there seems to have been
-at least one collision with almost 100 people involved.
+involved in one collision, the less rare it is although there seems to have 
+been at least one collision with almost 100 people involved.
 
 ```{r veh_per_crash}
 
@@ -297,8 +297,8 @@ person %>%
 
 I was curious to see if there are more collisions in November/December than 
 other months since there are so many people traveling plus celebration drinks,
-this isn't so straightforward though since different months have different number 
-of days.
+this isn't so straightforward though since different months have different 
+number of days.
 
 ```{r avg_crashes_per_day_by_month}
 person %>%
@@ -353,8 +353,8 @@ person %>%
 ```
 
 WORK_INJ only shows when the person's death certificate says that they were 
-"at work" at the time of the crash. As you may expect, there seem to be the most
-incidents where people are working during the day on weekdays.
+"at work" at the time of the crash. As you may expect, there seem to be the 
+most incidents where people are working during the day on weekdays.
 
 ```{r seat_possition}
 seat_pos <- tibble(id = c(0, 11, 12, 13, 18, 19, 21, 22, 23, 28, 29, 31, 32,
@@ -402,7 +402,7 @@ person %>%
         facet_grid(SEAT_ROW ~ SEAT_SIDE)
 ```
 
-By spliting the seat position into two features, we can see how offten people 
+By splitting the seat position into two features, we can see how often people 
 are in each seat and how many people survive in each seat.
 
 ### Drug and Alcohol Use 
@@ -410,7 +410,8 @@ are in each seat and how many people survive in each seat.
 ```{r}
 
 tibble(
-    persons_state = c('drunk_driver', 'sober_driver', 'drunk_passenger', 'sober_passenger'),
+    persons_state = c('drunk_driver', 'sober_driver',
+                      'drunk_passenger', 'sober_passenger'),
     count = with(person, c(sum(DRINKING == 1 & SEAT_POS == 11),
             sum(DRINKING == 0 & SEAT_POS == 11),
             sum(DRINKING == 1 & SEAT_POS != 11),
@@ -427,7 +428,8 @@ accident have better things to do than check if passengers have been drinking.
 
 ```{r perc_alc_reported}
 perc_alc_reported <- filter(person, SEAT_POS != 11) %>%
-                        summarize(perc_alc_reported = sum((DRINKING <= 1)) / n()) %>%
+                        summarize(perc_alc_reported = sum((DRINKING <= 1)) /
+                                                            n()) %>%
                         round(4) * 100
 
 ```
@@ -527,11 +529,9 @@ vehicle this comparison can't really be made so directly.
 child_restraint_pos <- person %>%
                         filter(REST_USE %in% child_restraints$id) 
 
-# Rows are not reported directly so we need to join with seat positions and use regex to get row
+# Rows are not reported directly so we need to join with seat positions 
 child_restraint_pos <- left_join(child_restraint_pos, child_restraints,
                                  by = c("REST_USE" = "id"))
-
-child_restraint_pos$SEAT_ROW <- gsub("(Seat).*", "", child_restraint_pos$pos)
 
 ggplot(child_restraint_pos, aes(x =SEAT_ROW, fill = type)) +
     geom_bar() +
@@ -665,24 +665,24 @@ person %>%
 
 **Description 1:** 
 
-Accidents with alcohol involvment are much more frequesnt on the weekend 
-evenings. They also increase some durring the evenings thoughout the week 
+Accidents with alcohol involvement are much more frequent on the weekend 
+evenings. They also increase some during the evenings throughout the week 
 compared to the middle of the day, when there are very few fatal accidents
-with alcohol involvment. Accidents with drug or drug and alcohol involvment
-also are the highest durring the weekend evening, although not nearly to the
+with alcohol involvement. Accidents with drug or drug and alcohol involvement
+also are the highest during the weekend evening, although not nearly to the
 degree that alcohol is.
 
 ### Plot 2
 
-```{r}
+```{r final_chile_seat_row}
 
-child_restraint_pos$SEAT_ROW <- factor(child_restraint_pos$SEAT_ROW, 
+child_restraint_pos$SEAT_ROW <- factor(child_restraint_pos$SEAT_ROW,
                                        levels = c("Front", "Second", "Third",
                                                   "Fourth", "Other",
                                                   "Not Reported", "Unknown" ))
 
 child_restraint_pos %>%
-    ggplot(aes(x =SEAT_ROW, fill = type)) +
+    ggplot(aes(x = SEAT_ROW, fill = type)) +
         geom_bar() +
         labs(title = "Child Seat Row by Restraint Type",
              x = "Seat Row") +
@@ -696,9 +696,9 @@ child_restraint_pos %>%
 **Description 2:**
 
 Child restraints are most commonly put in the second row of vehicles, which 
-makes sense because it is recomended not to put them in the front row 
+makes sense because it is recommended not to put them in the front row 
 (especially with airbags) and most cars have two rows. The second most common is
-the thrid row (vans and SUVs). We can also see that most frequently the
+the third row (vans and SUVs). We can also see that most frequently the
 type of child restraint is not reported or unknown to the officer but forward
 facing seats are the most common known child restraints.
 
@@ -735,7 +735,7 @@ You can view this plot as a vehicles standard layout with the driver being in
 the top left corner, and having by far the highest fatality rate followed 
 by the front right ("shotgun") seat. Another interesting takeaway is that I 
 have always heard that the driver side back seat is the safest in the car, but 
-it appears to actually have the lowest survivor rate od any second or third 
+it appears to actually have the lowest survivor rate of any second or third 
 row seat.
 
 *It should be noted that this plot is biased since the data is only collisions 
@@ -747,25 +747,26 @@ passenger, the driver, so you would expect their survival rate to be lower.
 
 The FARS report has an incredible amount of information in it, even with just
 focusing on the person data csv there were 80587 individuals with 75 features.
-To start trying to wrap my head arround this data set, I started by exploring
-a few of the more prominant features individually, but with how much 
+To start trying to wrap my head around this data set, I started by exploring
+a few of the more prominent features individually, but with how much 
 interesting information is available it is hard to resist diving into 
 comparisons for very long. I ended up exploring a lot of relationships but the
 two main things most of them came back to is what are the survival rates in
-different situatons and unders what circumstances do accidents with fatalities 
+different situations and under what circumstances do accidents with fatalities 
 happen.
 
 There were some relationships that seemed pretty clear, such as using child
-restraints saving childrens lives and drugs and alcohol being
+restraints saving children's lives and drugs and alcohol being
 a factor more frequently on weekend evenings. However with there being 
-so many conflaiting factors to consider a lot of the relationships were less 
-clear. 
+so many conflating factors to consider a lot of the relationships were less 
+clear. One thing that was tricky with this dataset is that most of the features
+are categorical which seems to make regressions and comparisons harder to do. 
 
 There is still almost endless additional exploration of this data to be done (
 which is probably why the Whitehouse put out the call to action). I think 
 there are a lot of insights to be gained by combining more of the data files,
 for example being able to bring in weather conditions from the accident file
-and vehilce make/model from the vehicle file and combining it with our data 
+and vehicle make/model from the vehicle file and combining it with our data 
 about child restraints could give insights to what cars parents should avoid
 especially if they live somewhere that is particularly rainy or snowy. 
 

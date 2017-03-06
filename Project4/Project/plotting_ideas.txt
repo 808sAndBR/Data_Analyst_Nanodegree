@@ -1,0 +1,30 @@
+# Ideas to plot
+
+Maps
+
+* Heat map (will just be population map probably) 
+* Drunk driving incidents in state / tot in state 
+* Drunk driving % by month (does it peak around holidays?)
+* Most dangerous driving days of the year
+
+Person Data:
+Age (possible to compare to age distribution of state?)
+Compare types of restraints and injury severity
+Drinking vs. Age
+Drugs vs. age
+Underage drunks
+Drugs by state
+Breakdowns of cyclist info
+Lag time from crash to death
+How often are they at work
+* Is there something interesting here when combined with time of day?
+LOCATION for where non-motorists were during time of crash
+Survival by seat
+Number of people per car
+number of people per accident
+AVG number of people in car depending on age
+
+Can I plot position in the car by making factors for row and left, middle, right and
+adding jitter and alpha to understand where people sit?
+
+color for survived vs no plot lag time
