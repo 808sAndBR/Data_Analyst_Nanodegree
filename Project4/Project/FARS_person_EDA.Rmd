@@ -357,6 +357,36 @@ WORK_INJ only shows when the person's death certificate says that they were
 incidents where people are working during the day on weekdays.
 
 ```{r seat_possition}
+seat_pos <- tibble(id = c(0, 11, 12, 13, 18, 19, 21, 22, 23, 28, 29, 31, 32,
+                          33, 38, 39, 41, 42, 43, 48, 49, 50, 51, 98, 99),
+                   pos = c("Not a Motor Vehicle Occupant",
+                            "Front Seat – Left Side",
+                            "Front Seat – Middle",
+                            "Front Seat – Right Side",
+                            "Front Seat – Other",
+                            "Front Seat – Unknown",
+                            "Second Seat – Left Side",
+                            "Second Seat – Middle",
+                            "Second Seat – Right Side",
+                            "Second Seat – Other",
+                            "Second Seat – Unknown",
+                            "Third Seat – Left Side",
+                            "Third Seat – Middle",
+                            "Third Seat – Right Side",
+                            "Third Seat – Other",
+                            "Third Seat – Unknown",
+                            "Fourth Seat – Left Side",
+                            "Fourth Seat – Middle",
+                            "Fourth Seat – Right Side",
+                            "Fourth Seat – Other",
+                            "Fourth Seat – Unknown",
+                            "Sleeper Section of Cab",
+                            "Other",
+                            "Not Reported",
+                            "Unknown")
+                    )
+
+
 person <- left_join(person, seat_pos, by = c("SEAT_POS" ="id"))
 
 person$SEAT_SIDE <- gsub(".*(Seat)", "", person$pos) %>%
@@ -372,6 +402,8 @@ person %>%
         facet_grid(SEAT_ROW ~ SEAT_SIDE)
 ```
 
+By spliting the seat position into two features, we can see how offten people 
+are in each seat and how many people survive in each seat.
 
 ### Drug and Alcohol Use 
 
@@ -492,42 +524,12 @@ vehicle this comparison can't really be made so directly.
 
 
 ```{r child_seat_pos}
-seat_pos <- tibble(id = c(0, 11, 12, 13, 18, 19, 21, 22, 23, 28, 29, 31, 32,
-                          33, 38, 39, 41, 42, 43, 48, 49, 50, 51, 98, 99),
-                   pos = c("Not a Motor Vehicle Occupant",
-                            "Front Seat – Left Side",
-                            "Front Seat – Middle",
-                            "Front Seat – Right Side",
-                            "Front Seat – Other",
-                            "Front Seat – Unknown",
-                            "Second Seat – Left Side",
-                            "Second Seat – Middle",
-                            "Second Seat – Right Side",
-                            "Second Seat – Other",
-                            "Second Seat – Unknown",
-                            "Third Seat – Left Side",
-                            "Third Seat – Middle",
-                            "Third Seat – Right Side",
-                            "Third Seat – Other",
-                            "Third Seat – Unknown",
-                            "Fourth Seat – Left Side",
-                            "Fourth Seat – Middle",
-                            "Fourth Seat – Right Side",
-                            "Fourth Seat – Other",
-                            "Fourth Seat – Unknown",
-                            "Sleeper Section of Cab",
-                            "Other",
-                            "Not Reported",
-                            "Unknown")
-                    )
-
 child_restraint_pos <- person %>%
                         filter(REST_USE %in% child_restraints$id) 
 
 # Rows are not reported directly so we need to join with seat positions and use regex to get row
-child_restraint_pos <- left_join(child_restraint_pos, seat_pos,
-                                      by = c("SEAT_POS" ="id")) %>%
-                                left_join(child_restraints, by = c("REST_USE" = "id"))
+child_restraint_pos <- left_join(child_restraint_pos, child_restraints,
+                                 by = c("REST_USE" = "id"))
 
 child_restraint_pos$SEAT_ROW <- gsub("(Seat).*", "", child_restraint_pos$pos)
 
@@ -638,11 +640,10 @@ to someone older but the younger person may recover, which would mean they do
 not have a lag time. So I don't think we can really draw any conclusions from 
 this.
 
-```{r}
-names(person)
-```
-
 ## Final Plots and Summary
+
+### Plot 1
+
 ```{r final_imparment_by_day}
 person %>%
     filter(DRINKING == 1 | DRUGS == 1, HOUR < 25) %>%
@@ -661,6 +662,17 @@ person %>%
         theme(legend.position = "top")
 
 ```
+
+**Description 1:** 
+
+Accidents with alcohol involvment are much more frequesnt on the weekend 
+evenings. They also increase some durring the evenings thoughout the week 
+compared to the middle of the day, when there are very few fatal accidents
+with alcohol involvment. Accidents with drug or drug and alcohol involvment
+also are the highest durring the weekend evening, although not nearly to the
+degree that alcohol is.
+
+### Plot 2
 
 ```{r}
 
@@ -681,6 +693,16 @@ child_restraint_pos %>%
         
 ```
 
+**Description 2:**
+
+Child restraints are most commonly put in the second row of vehicles, which 
+makes sense because it is recomended not to put them in the front row 
+(especially with airbags) and most cars have two rows. The second most common is
+the thrid row (vans and SUVs). We can also see that most frequently the
+type of child restraint is not reported or unknown to the officer but forward
+facing seats are the most common known child restraints.
+
+### Plot 3 
 
 ```{r final_seat_pos}
 
@@ -707,40 +729,50 @@ person %>%
         )
 ```
 
+**Description 3:**
+
+You can view this plot as a vehicles standard layout with the driver being in
+the top left corner, and having by far the highest fatality rate followed 
+by the front right ("shotgun") seat. Another interesting takeaway is that I 
+have always heard that the driver side back seat is the safest in the car, but 
+it appears to actually have the lowest survivor rate od any second or third 
+row seat.
+
+*It should be noted that this plot is biased since the data is only collisions 
+in which there was a fatality and it is most common for there to only be one
+passenger, the driver, so you would expect their survival rate to be lower. 
+
 
 ## Reflection
 
-# Ideas to plot
+The FARS report has an incredible amount of information in it, even with just
+focusing on the person data csv there were 80587 individuals with 75 features.
+To start trying to wrap my head arround this data set, I started by exploring
+a few of the more prominant features individually, but with how much 
+interesting information is available it is hard to resist diving into 
+comparisons for very long. I ended up exploring a lot of relationships but the
+two main things most of them came back to is what are the survival rates in
+different situatons and unders what circumstances do accidents with fatalities 
+happen.
 
-Maps
+There were some relationships that seemed pretty clear, such as using child
+restraints saving childrens lives and drugs and alcohol being
+a factor more frequently on weekend evenings. However with there being 
+so many conflaiting factors to consider a lot of the relationships were less 
+clear. 
 
-* Heat map (will just be population map probably) 
-* Drunk driving incidents in state / tot in state 
-* Drunk driving % by month (does it peak around holidays?)
-* Most dangerous driving days of the year
+There is still almost endless additional exploration of this data to be done (
+which is probably why the Whitehouse put out the call to action). I think 
+there are a lot of insights to be gained by combining more of the data files,
+for example being able to bring in weather conditions from the accident file
+and vehilce make/model from the vehicle file and combining it with our data 
+about child restraints could give insights to what cars parents should avoid
+especially if they live somewhere that is particularly rainy or snowy. 
 
-Person Data:
-Age (possible to compare to age distribution of state?)
-Compare types of restraints and injury severity
-Drinking vs. Age
-Drugs vs. age
-Underage drunks
-Drugs by state
-Breakdowns of cyclist info
-Lag time from crash to death
-How often are they at work
-* Is there something interesting here when combined with time of day?
-LOCATION for where non-motorists were during time of crash
-Survival by seat
-Number of people per car
-number of people per accident
-AVG number of people in car depending on age
 
-Can I plot position in the car by making factors for row and left, middle, right and
-adding jitter and alpha to understand where people sit?
+## Plot Count
+Hi reviewer, to save you from having to count my plots here is a count of 
+everything in Figs/: `r length(list.files("Figs/"))` 
 
-color for survived vs no plot lag time
-
-```{r count_plots}
-length(list.files("Figs/"))
-```
+I deleted the directory right before knitting (so no duplicate counts from
+changing r chunk names).
