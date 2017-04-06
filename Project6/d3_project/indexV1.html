@@ -41,6 +41,7 @@
             </div>
             <div id="tooltip" class="hidden">
                 <p>Units: <span id="units">0</span></p>
+                <p># Projects this size: <span id="project_count">""</span></p>
                 <p>Location(s): <span id="location">""</span></p>
             </div>
         
@@ -50,7 +51,10 @@
             d3.csv("all_quarters_merged.csv", function(data) {
                 // Should the blank ones be filtered out?
                 dataset = data.filter(function(d) {return d.zoning_generalized != ''})
-                                .filter(function(d) {return d.units < 1000});
+                                .filter(function(d) {return d.units < 1000})
+                                .filter(function(d) {return d.report_year == 2014})
+                                .filter(function(d) {return d.report_quarter == 2});
+
 
             var margin = {top: 20, right: 10, bottom: 20, left: 130};
             
@@ -68,11 +72,6 @@
             var x_scale = d3.scaleLinear()
                             .domain(unit_range)
                             .range([0, width])
-
-            // var x_scale = d3.scaleLog()
-            //                 .domain([1, 10000])
-            //                 .range([0, width])
-
 
             var y_range = d3.range(0, height, height/zoning.length)
 
@@ -115,7 +114,7 @@
                 .attr("width", 1)
                 .attr("height", bar_height)
                 .attr("fill", "rgb(78, 157, 178)")
-                .attr("opacity",.1)
+                .attr("opacity", .2)
                 .on("mouseover",function(d) {
                     var xPosition = parseFloat(d3.select(this).attr("x")) + 40;
                     var yPosition = parseFloat(d3.select(this).attr("y")) + 95;
@@ -128,6 +127,9 @@
                     d3.select("#tooltip")
                       .select("#units")
                       .text(d.units);
+                    d3.select("#tooltip")
+                      .select("#project_count")
+                      .text(same_size_units(d.units, d.zoning_generalized).length);
                       //Show the tooltip
                     d3.select("#tooltip").classed("hidden", false);
                 })

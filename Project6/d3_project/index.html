@@ -37,17 +37,17 @@
 
             // bahahahah ok this plan makes it replot it a ton of times
             function drawPlot(){
-            var margin = {top: 20, right: 10, bottom: 20, left: 130};
-            
-            var width = 960 - margin.left - margin.right;
-            var height = 400 - margin.top - margin.bottom;
+                var margin = {top: 20, right: 10, bottom: 20, left: 130};
+                
+                var width = 960 - margin.left - margin.right;
+                var height = 400 - margin.top - margin.bottom;
 
-            var zoning = d3.set(dataset, function(d){
-                                return d["zoning_generalized"]
-                            }).values()
+                var zoning = d3.set(dataset, function(d){
+                                    return d["zoning_generalized"]
+                                }).values()
 
-            var unit_range = d3.extent(dataset, function(d){
-                                            return +d.units
+                var unit_range = d3.extent(dataset, function(d){
+                                                return +d.units
                                         })
 
             var x_scale = d3.scaleLinear()
